@@ -6,6 +6,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -27,6 +29,7 @@ import kotlinx.coroutines.delay
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.ui.theme.SberAfishaTheme
+import ramble.sokol.sberafisha.ui.theme.White
 
 
 @Destination(start = true)
@@ -34,10 +37,6 @@ import ramble.sokol.sberafisha.ui.theme.SberAfishaTheme
 fun SplashScreen(
     navigator: DestinationsNavigator
 ) {
-
-    SberAfishaTheme (
-        isSplashScreen = true
-    ) {
 
         val transition = rememberInfiniteTransition()
         val alpha by transition.animateFloat(
@@ -55,12 +54,14 @@ fun SplashScreen(
             key1 = true
         ) {
             delay(3000L)
+            navigator.popBackStack()
             navigator.navigate(EntryScreenDestination)
         }
 
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(White),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -84,5 +85,4 @@ fun SplashScreen(
                 contentDescription = "TextSplashScreen"
             )
         }
-    }
 }
