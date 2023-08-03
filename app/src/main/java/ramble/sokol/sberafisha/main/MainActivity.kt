@@ -7,7 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import com.ramcosta.composedestinations.DestinationsNavHost
-import ramble.sokol.sberafisha.authentication_and_splash.view.screens.NavGraphs
+import ramble.sokol.sberafisha.NavGraphs
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

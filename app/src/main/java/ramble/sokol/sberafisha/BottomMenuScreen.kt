@@ -1,0 +1,110 @@
+package ramble.sokol.sberafisha
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import ramble.sokol.sberafisha.ui.theme.ColorTextHint
+import ramble.sokol.sberafisha.ui.theme.ColorTrueNav
+import ramble.sokol.sberafisha.ui.theme.White
+import com.ramcosta.composedestinations.annotation.Destination
+
+@Destination
+@Composable
+fun BottomMenuScreen(
+    navigator: DestinationsNavigator
+){
+
+    var selectedItem by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        BottomNavigation (
+            backgroundColor = White
+        ){
+            BottomNavigationItem(
+                selected = selectedItem == 0,
+                onClick = {
+                    selectedItem = 0
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.logo_afisha),
+                        contentDescription = "Poster",
+                        tint = if (selectedItem == 0) ColorTrueNav else ColorTextHint
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.text_poster),
+                        color = if (selectedItem == 0) ColorTrueNav else ColorTextHint
+                        )
+                }
+            )
+            BottomNavigationItem(
+                selected = selectedItem == 1,
+                onClick = {
+                    selectedItem = 1
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.logo_route),
+                        contentDescription = "Route",
+                        tint = if (selectedItem == 1) ColorTrueNav else ColorTextHint
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.text_router),
+                        color = if (selectedItem == 1) ColorTrueNav else ColorTextHint
+                    )
+                }
+            )
+            BottomNavigationItem(
+                selected = selectedItem == 2,
+                onClick = {
+                    selectedItem = 2
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.logo_profile),
+                        contentDescription = "Profile",
+                        tint = if (selectedItem == 2) ColorTrueNav else ColorTextHint
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.text_profile),
+                        color = if (selectedItem == 2) ColorTrueNav else ColorTextHint
+                    )
+                }
+            )
+        }
+    }
+
+    when (selectedItem){
+        0 -> AfishaScreen()
+        1 -> RouteScreen()
+        2 -> ProfileScreen()
+    }
+
+}

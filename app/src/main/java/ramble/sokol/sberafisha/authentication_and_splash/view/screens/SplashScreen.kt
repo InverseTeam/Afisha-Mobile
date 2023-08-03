@@ -27,7 +27,7 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 import ramble.sokol.sberafisha.R
-import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.ui.theme.SberAfishaTheme
 import ramble.sokol.sberafisha.ui.theme.White
 

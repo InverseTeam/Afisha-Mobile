@@ -37,8 +37,8 @@ import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonF
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordConfirmationEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
-import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.EntryScreenDestination
-import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.RegistrationScreenDestination
+import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
 
@@ -103,7 +103,7 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         ButtonForEntry(text = stringResource(id = R.string.text_register)){
-            // click
+            navigator.navigate(BottomMenuScreenDestination)
         }
 
         Spacer(modifier = Modifier.padding(top = 153.dp))

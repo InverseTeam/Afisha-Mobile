@@ -41,8 +41,7 @@ import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonF
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
-import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.EntryScreenDestination
-import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.RegistrationScreenDestination
+import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButton
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButtonSber

@@ -12,4 +12,7 @@
     <string name="text_end_agreement">пользовательское соглашение</string>
     <string name="text_register">Зарегистрироваться</string>
     <string name="text_entrance">Вход</string>
+    <string name="text_poster">Афиша</string>
+    <string name="text_router">Маршруты</string>
+    <string name="text_profile">Профиль</string>
 </resources>

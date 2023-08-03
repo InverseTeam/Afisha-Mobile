@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButton
 import ramble.sokol.sberafisha.ui.theme.ColorBorderButton
-import ramble.sokol.sberafisha.ui.theme.ColorTextHintSecond
+import ramble.sokol.sberafisha.ui.theme.ColorTextSecond
 import ramble.sokol.sberafisha.ui.theme.White
 
 @Composable
@@ -56,7 +56,7 @@ fun ButtonForEntryToRegistration(
                 fontSize = 16.sp,
                 lineHeight = 16.sp,
                 fontWeight = FontWeight(700),
-                color = ColorTextHintSecond,
+                color = ColorTextSecond,
                 fontFamily = FontFamily(Font(R.font.mont_semibold)),
                 textAlign = TextAlign.Center
             )
