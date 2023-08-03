@@ -45,7 +45,8 @@ fun ButtonForEntry(
     ){
         Text(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(vertical = 2.dp),
             text = text,
             style = TextStyle(
                 fontSize = 16.sp,

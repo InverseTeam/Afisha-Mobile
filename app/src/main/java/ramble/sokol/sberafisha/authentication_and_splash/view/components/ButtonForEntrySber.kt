@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,7 +55,9 @@ fun ButtonForEntrySber(
     ){
 
         Row (
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -65,6 +68,8 @@ fun ButtonForEntrySber(
                 painter = painterResource(id = R.drawable.sber_logo_for_button),
                 contentDescription = null
             )
+
+            Spacer(modifier = Modifier.padding(start = 4.dp))
 
             Text(
                 text = text,

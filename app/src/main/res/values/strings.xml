@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SberAfisha</string>
+    <string name="text_button_entry">Войти</string>
+    <string name="text_forget_the_password">Забыли пароль?</string>
+    <string name="text_recover">Восстановить</string>
+    <string name="text_button_entry_sberid">Войти со Sber ID</string>
+    <string name="text_hint_email">Почта</string>
+    <string name="text_hint_password">Пароль</string>
 </resources>
