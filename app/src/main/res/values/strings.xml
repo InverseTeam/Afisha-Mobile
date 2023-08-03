@@ -6,7 +6,10 @@
     <string name="text_button_entry_sberid">Войти со Sber ID</string>
     <string name="text_hint_email">Почта</string>
     <string name="text_hint_password">Пароль</string>
+    <string name="text_hint_password_confirmation">Подтверждение пароля</string>
     <string name="text_registration">Регистрация</string>
     <string name="text_start_agreement">Входя в систему, вы принимаете</string>
     <string name="text_end_agreement">пользовательское соглашение</string>
+    <string name="text_register">Зарегистрироваться</string>
+    <string name="text_entrance">Вход</string>
 </resources>

@@ -34,12 +34,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
+import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.authentication_and_splash.view.screens.destinations.RegistrationScreenDestination
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButton
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButtonSber
@@ -48,7 +51,9 @@ import ramble.sokol.sberafisha.ui.theme.White
 
 @Destination
 @Composable
-fun EntryScreen(){
+fun EntryScreen(
+    navigator: DestinationsNavigator
+){
 
     var email by remember {
         mutableStateOf("")
@@ -144,7 +149,7 @@ fun EntryScreen(){
         Spacer(modifier = Modifier.padding(top = 123.dp))
 
         ButtonForEntryToRegistration(text = stringResource(id = R.string.text_registration)) {
-            // click
+            navigator.navigate(RegistrationScreenDestination)
         }
         
         Spacer(modifier = Modifier.padding(top = 25.dp))
