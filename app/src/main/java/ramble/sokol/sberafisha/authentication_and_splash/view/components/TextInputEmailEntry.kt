@@ -55,7 +55,9 @@ fun TextInputEmailEntry(
                 stringResource(id = R.string.text_hint_email),
                 style = TextStyle(
                     color = ColorTextHint,
-                    fontFamily = FontFamily(Font(R.font.mont_semibold))
+                    fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                    lineHeight = 24.sp,
+                    fontWeight = FontWeight(700)
                 )
             ) },
         colors = TextFieldDefaults.textFieldColors(

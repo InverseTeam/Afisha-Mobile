@@ -2,6 +2,7 @@ package ramble.sokol.sberafisha.authentication_and_splash.view.components
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButton
+import ramble.sokol.sberafisha.ui.theme.ColorBorderButton
+import ramble.sokol.sberafisha.ui.theme.ColorTextHintSecond
 import ramble.sokol.sberafisha.ui.theme.White
 
 @Composable
-fun ButtonForEntry(
+fun ButtonForEntryToRegistration(
     text: String,
     onClick: () -> Unit
 )
@@ -33,12 +36,13 @@ fun ButtonForEntry(
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                color = ColorBackgroundButton,
-                shape = RoundedCornerShape(size = 16.dp)
+            .border(
+                width = 2.dp,
+                color = ColorBorderButton,
+                shape = RoundedCornerShape(size = 15.dp)
             ),
         colors = ButtonDefaults.buttonColors(
-            containerColor = ColorBackgroundButton
+            containerColor = Color.Transparent
         ),
         onClick = onClick
 
@@ -52,7 +56,7 @@ fun ButtonForEntry(
                 fontSize = 16.sp,
                 lineHeight = 16.sp,
                 fontWeight = FontWeight(700),
-                color = White,
+                color = ColorTextHintSecond,
                 fontFamily = FontFamily(Font(R.font.mont_semibold)),
                 textAlign = TextAlign.Center
             )

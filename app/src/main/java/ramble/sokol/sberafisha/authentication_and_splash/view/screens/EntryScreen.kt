@@ -37,6 +37,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
@@ -60,7 +61,8 @@ fun EntryScreen(){
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp)
+            .padding(32.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         Image(
             modifier = Modifier
@@ -139,5 +141,47 @@ fun EntryScreen(){
             // click
         }
 
+        Spacer(modifier = Modifier.padding(top = 123.dp))
+
+        ButtonForEntryToRegistration(text = stringResource(id = R.string.text_registration)) {
+            // click
+        }
+        
+        Spacer(modifier = Modifier.padding(top = 25.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+            ){
+            Text(
+                text = stringResource(id = R.string.text_start_agreement),
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                    fontWeight = FontWeight(700),
+                    color = ColorText,
+                    textAlign = TextAlign.Center
+                )
+            )
+
+            Spacer(modifier = Modifier.padding(2.dp))
+
+            Text(
+                modifier = Modifier.clickable {
+                    // click
+                },
+                text = stringResource(id = R.string.text_end_agreement),
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                    fontWeight = FontWeight(700),
+                    color = ColorActionText,
+                    textAlign = TextAlign.Center
+                )
+            )
+        }
     }
 }
