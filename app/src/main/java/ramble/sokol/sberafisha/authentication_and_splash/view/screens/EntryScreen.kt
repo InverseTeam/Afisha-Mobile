@@ -1,5 +1,6 @@
 package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,9 +36,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleCoroutineScope
+import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.RetrofitHelper
+import ramble.sokol.sberafisha.authentication_and_splash.domain.util.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
@@ -48,11 +60,22 @@ import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButtonSber
 import ramble.sokol.sberafisha.ui.theme.ColorText
 import ramble.sokol.sberafisha.ui.theme.White
 
+
+private lateinit var apiAuth: APIAuth
+private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
+
+@OptIn(DelicateCoroutinesApi::class)
 @Destination
 @Composable
 fun EntryScreen(
     navigator: DestinationsNavigator
 ){
+
+     coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+        throwable.printStackTrace()
+    }
+
+    apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
 
     var email by remember {
         mutableStateOf("")
@@ -97,7 +120,7 @@ fun EntryScreen(
         Spacer(modifier = Modifier.padding(top = 8.dp))
         
         ButtonForEntry(text = stringResource(id = R.string.text_button_entry)){
-            // click
+            entry()
         }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -148,6 +171,7 @@ fun EntryScreen(
         Spacer(modifier = Modifier.padding(top = 123.dp))
 
         ButtonForEntryToRegistration(text = stringResource(id = R.string.text_registration)) {
+            navigator.popBackStack()
             navigator.navigate(RegistrationScreenDestination)
         }
         
@@ -186,6 +210,22 @@ fun EntryScreen(
                     textAlign = TextAlign.Center
                 )
             )
+        }
+    }
+}
+
+@DelicateCoroutinesApi
+fun entry() {
+    GlobalScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        val body = JsonObject().apply {
+            addProperty("email", "abc@gmail.com")
+            addProperty("password", "12345678")
+        }
+        val result = apiAuth.entryAndGetToken(body)
+        if (result.isSuccessful){
+            Log.d("MyLog", result.body().toString())
+        }else{
+            Log.d("MyLog", result.errorBody().toString())
         }
     }
 }
