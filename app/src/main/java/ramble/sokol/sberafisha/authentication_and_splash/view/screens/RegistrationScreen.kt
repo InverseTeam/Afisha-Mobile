@@ -103,6 +103,7 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         ButtonForEntry(text = stringResource(id = R.string.text_register)){
+            navigator.popBackStack()
             navigator.navigate(BottomMenuScreenDestination)
         }
 
