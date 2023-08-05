@@ -1,11 +1,12 @@
 package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 
+import android.content.Context
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,19 +15,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -37,39 +34,46 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.RetrofitHelper
-import ramble.sokol.sberafisha.authentication_and_splash.domain.util.APIAuth
+import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
+import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
-import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButton
-import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButtonSber
 import ramble.sokol.sberafisha.ui.theme.ColorText
-import ramble.sokol.sberafisha.ui.theme.White
+import java.util.Timer
+import java.util.logging.Handler
+import kotlin.concurrent.timerTask
 
 
-private lateinit var apiAuth: APIAuth
+lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
+private val scope = CoroutineScope(Dispatchers.Default)
 
-@OptIn(DelicateCoroutinesApi::class)
 @Destination
 @Composable
 fun EntryScreen(
     navigator: DestinationsNavigator
 ){
+
+    val mContext = LocalContext.current
 
      coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
@@ -120,7 +124,17 @@ fun EntryScreen(
         Spacer(modifier = Modifier.padding(top = 8.dp))
         
         ButtonForEntry(text = stringResource(id = R.string.text_button_entry)){
-            entry()
+            GlobalScope.launch {
+                if (entry(mContext, email, password, navigator)) {
+                    Log.d("MyLog", "ФФФФФФФФФФФФФФФФФ")
+                    android.os.Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(mContext, "Вы успешно вошли", Toast.LENGTH_SHORT).show()
+                        navigator.popBackStack()
+                        navigator.navigate(BottomMenuScreenDestination)
+                    }
+                }
+
+            }
         }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -214,18 +228,21 @@ fun EntryScreen(
     }
 }
 
-@DelicateCoroutinesApi
-fun entry() {
-    GlobalScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+suspend fun entry(context: Context, email: String, password: String, navigator: DestinationsNavigator): Boolean {
+    var res = false
+    GlobalScope.async(Dispatchers.Default) {
         val body = JsonObject().apply {
-            addProperty("email", "abc@gmail.com")
-            addProperty("password", "12345678")
+            addProperty("email", email)
+            addProperty("password", password)
         }
         val result = apiAuth.entryAndGetToken(body)
         if (result.isSuccessful){
             Log.d("MyLog", result.body().toString())
+            res = true
         }else{
-            Log.d("MyLog", result.errorBody().toString())
+            Log.d("MyLog", result.message())
         }
-    }
+    }.await()
+    Log.d("MyLOg", res.toString())
+    return res
 }

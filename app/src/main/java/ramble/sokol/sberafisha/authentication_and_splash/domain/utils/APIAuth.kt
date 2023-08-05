@@ -1,4 +1,4 @@
-package ramble.sokol.sberafisha.authentication_and_splash.domain.util
+package ramble.sokol.sberafisha.authentication_and_splash.domain.utils
 
 import com.google.gson.JsonObject
 import retrofit2.Response
