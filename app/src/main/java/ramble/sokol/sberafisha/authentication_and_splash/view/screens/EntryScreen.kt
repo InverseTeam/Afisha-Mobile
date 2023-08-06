@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.RetrofitHelper
+import ramble.sokol.sberafisha.authentication_and_splash.domain.model.ResponseAuth
 import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
@@ -58,6 +59,9 @@ import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.Timer
 import java.util.logging.Handler
 import kotlin.concurrent.timerTask
@@ -124,17 +128,7 @@ fun EntryScreen(
         Spacer(modifier = Modifier.padding(top = 8.dp))
         
         ButtonForEntry(text = stringResource(id = R.string.text_button_entry)){
-            GlobalScope.launch {
-                if (entry(mContext, email, password, navigator)) {
-                    Log.d("MyLog", "ФФФФФФФФФФФФФФФФФ")
-                    android.os.Handler(Looper.getMainLooper()).post {
-                        Toast.makeText(mContext, "Вы успешно вошли", Toast.LENGTH_SHORT).show()
-                        navigator.popBackStack()
-                        navigator.navigate(BottomMenuScreenDestination)
-                    }
-                }
-
-            }
+            entry(mContext, navigator, email, password)
         }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -228,21 +222,48 @@ fun EntryScreen(
     }
 }
 
-suspend fun entry(context: Context, email: String, password: String, navigator: DestinationsNavigator): Boolean {
-    var res = false
-    GlobalScope.async(Dispatchers.Default) {
-        val body = JsonObject().apply {
-            addProperty("email", email)
-            addProperty("password", password)
+fun entry(context: Context, navigator: DestinationsNavigator, email: String, password: String){
+    val body = JsonObject().apply {
+        addProperty("email", email)
+        addProperty("password", password)
+    }
+    val call = apiAuth.entryAndGetToken(body)
+
+    call.enqueue(object : Callback<ResponseAuth> {
+        override fun onResponse(call: Call<ResponseAuth>, response: Response<ResponseAuth>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                Log.d("MyLog", responseBody!!.authToken)
+                Toast.makeText(context, "Вы успешно вошли", Toast.LENGTH_SHORT).show()
+                navigator.popBackStack()
+                navigator.navigate(BottomMenuScreenDestination)
+            } else {
+                Log.d("MyLog", "not successful ${response.toString()}")
+            }
         }
-        val result = apiAuth.entryAndGetToken(body)
-        if (result.isSuccessful){
-            Log.d("MyLog", result.body().toString())
-            res = true
-        }else{
-            Log.d("MyLog", result.message())
+
+        override fun onFailure(call: Call<ResponseAuth>, t: Throwable) {
+            Log.d("MyLog", t.message.toString())
         }
-    }.await()
-    Log.d("MyLOg", res.toString())
-    return res
+    })
+
 }
+
+//suspend fun entry(context: Context, email: String, password: String, navigator: DestinationsNavigator): Boolean {
+//    var res = false
+//    GlobalScope.async(Dispatchers.Default) {
+//        val body = JsonObject().apply {
+//            addProperty("email", email)
+//            addProperty("password", password)
+//        }
+//        val result = apiAuth.entryAndGetToken(body)
+//        if (result.isSuccessful){
+//            Log.d("MyLog", result.body().toString())
+//            res = true
+//        }else{
+//            Log.d("MyLog", result.message())
+//        }
+//    }.await()
+//    Log.d("MyLOg", res.toString())
+//    return res
+//}
