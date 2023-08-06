@@ -1,7 +1,6 @@
 package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 
 import android.content.Context
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -33,21 +32,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
 import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ramble.sokol.sberafisha.R
-import ramble.sokol.sberafisha.RetrofitHelper
+import ramble.sokol.sberafisha.model_request.RetrofitHelper
 import ramble.sokol.sberafisha.authentication_and_splash.domain.model.ResponseAuth
 import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
@@ -57,19 +49,19 @@ import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInp
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
+import ramble.sokol.sberafisha.model_request.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.Timer
-import java.util.logging.Handler
-import kotlin.concurrent.timerTask
+import javax.inject.Inject
 
 
 lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private val scope = CoroutineScope(Dispatchers.Default)
+lateinit var tokenManager: TokenManager
 
 @Destination
 @Composable
@@ -78,6 +70,8 @@ fun EntryScreen(
 ){
 
     val mContext = LocalContext.current
+
+    tokenManager = TokenManager(mContext)
 
      coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
@@ -233,7 +227,7 @@ fun entry(context: Context, navigator: DestinationsNavigator, email: String, pas
         override fun onResponse(call: Call<ResponseAuth>, response: Response<ResponseAuth>) {
             if (response.isSuccessful) {
                 val responseBody = response.body()
-                Log.d("MyLog", responseBody!!.authToken)
+                tokenManager.saveToken(responseBody!!.authToken)
                 Toast.makeText(context, "Вы успешно вошли", Toast.LENGTH_SHORT).show()
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
