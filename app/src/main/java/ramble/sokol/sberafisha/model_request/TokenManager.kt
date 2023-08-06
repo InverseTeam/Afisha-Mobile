@@ -1,8 +1,6 @@
 package ramble.sokol.sberafisha.model_request
 
 import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 
 class TokenManager(context: Context) {
 

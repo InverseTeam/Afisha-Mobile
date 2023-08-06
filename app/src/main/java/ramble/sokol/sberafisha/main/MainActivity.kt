@@ -13,7 +13,6 @@ import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.NavGraphs
-import ramble.sokol.sberafisha.authentication_and_splash.view.screens.apiAuth
 
 class MainActivity : ComponentActivity() {
 

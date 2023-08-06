@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -21,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -56,8 +58,9 @@ fun BottomMenuScreen(
     ) {
         BottomNavigation (
             modifier = Modifier
-                .background(color = White, shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp, bottomEnd = 0.dp, bottomStart = 0.dp))
-                .shadow(elevation = 60.dp, spotColor = Shadow, ambientColor = Shadow),
+                .wrapContentSize()
+                .clip(RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)),
+            elevation = 4.dp,
             backgroundColor = White,
         ){
 

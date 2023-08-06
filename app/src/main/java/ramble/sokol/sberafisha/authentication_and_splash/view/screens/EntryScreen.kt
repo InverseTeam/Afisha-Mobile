@@ -55,13 +55,11 @@ import ramble.sokol.sberafisha.ui.theme.ColorText
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import javax.inject.Inject
 
 
-lateinit var apiAuth: APIAuth
+private lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
-private val scope = CoroutineScope(Dispatchers.Default)
-lateinit var tokenManager: TokenManager
+private lateinit var tokenManager: TokenManager
 
 @Destination
 @Composable
@@ -216,7 +214,7 @@ fun EntryScreen(
     }
 }
 
-fun entry(context: Context, navigator: DestinationsNavigator, email: String, password: String){
+private fun entry(context: Context, navigator: DestinationsNavigator, email: String, password: String){
     val body = JsonObject().apply {
         addProperty("email", email)
         addProperty("password", password)
