@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +61,7 @@ import retrofit2.Response
 private lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
+private lateinit var incorrectData: MutableState<Boolean>
 
 @Destination
 @Composable
@@ -76,7 +79,15 @@ fun RegistrationScreen(
 
     apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
 
+    incorrectData = remember {
+        mutableStateOf(false)
+    }
+
     var emailError by remember {
+        mutableStateOf(false)
+    }
+
+    var emailIncorrect by remember {
         mutableStateOf(false)
     }
 
@@ -85,6 +96,10 @@ fun RegistrationScreen(
     }
 
     var passwordConfirmationError by remember {
+        mutableStateOf(false)
+    }
+
+    var similarPassword by remember {
         mutableStateOf(false)
     }
 
@@ -122,11 +137,51 @@ fun RegistrationScreen(
                 emailError = false
                 passwordError = false
                 passwordConfirmationError = false
+                emailIncorrect = false
+                similarPassword = false
                 email = it
             },
             borderWidth = if (emailError) 1 else 0,
             color = if (emailError) Error else Color.Transparent
         )
+
+        if (incorrectData.value){
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 8.dp)){
+
+                Text(
+                    text = stringResource(id = R.string.text_email_exists),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(400),
+                        color = Error,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            }
+        }
+
+        if (emailIncorrect){
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 8.dp)){
+
+                Text(
+                    text = stringResource(id = R.string.text_incorrect_email),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(400),
+                        color = Error,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
@@ -136,6 +191,8 @@ fun RegistrationScreen(
                 emailError = false
                 passwordError = false
                 passwordConfirmationError = false
+                emailIncorrect = false
+                similarPassword = false
                 password = it
             },
             borderWidth = if (passwordError) 1 else 0,
@@ -150,25 +207,43 @@ fun RegistrationScreen(
                 emailError = false
                 passwordError = false
                 passwordConfirmationError = false
+                emailIncorrect = false
+                similarPassword = false
                 passwordConfirmation = it
             },
             borderWidth = if (passwordConfirmationError) 1 else 0,
             color = if (passwordConfirmationError) Error else Color.Transparent
         )
 
+        if (similarPassword){
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 8.dp)){
+
+                Text(
+                    text = stringResource(id = R.string.text_similar_password),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(400),
+                        color = Error,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         ButtonForEntry(text = stringResource(id = R.string.text_register)){
-            if (password.isEmpty()){
-                passwordError = true
-            }
-            if (email.isEmpty()){
-                emailError = true
-            }
-            if (passwordConfirmation.isEmpty()){
-                passwordConfirmationError = true
-            }
-            if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty()) {
+            if (password.isEmpty()) passwordError = true
+            if (email.isEmpty()) emailError = true
+            if (passwordConfirmation.isEmpty()) passwordConfirmationError = true
+            if (!isValidEmail(email) && !email.isEmpty()) emailIncorrect = true
+            if (password != passwordConfirmation) similarPassword = true
+            if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty() &&
+                isValidEmail(email) && password == passwordConfirmation) {
                 registration(mContext, navigator, email, password)
             }
 
@@ -220,6 +295,11 @@ fun RegistrationScreen(
     }
 }
 
+private fun isValidEmail(email: String): Boolean {
+    val emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
+    return email.matches(emailRegex)
+}
+
 fun registration(context: Context, navigator: DestinationsNavigator, email: String, password: String){
     val body = JsonObject().apply {
         addProperty("email", email)
@@ -231,16 +311,16 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
         override fun onResponse(call: Call<ResponseAuth>, response: Response<ResponseAuth>) {
             if (response.isSuccessful) {
                 getToken(context, email, password)
-                Toast.makeText(context, "Регистрация прошла успешно", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.text_successful_registration, Toast.LENGTH_SHORT).show()
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             } else {
-                Log.d("MyLog", "not successful ${response.toString()}")
+                incorrectData.value = true
             }
         }
 
         override fun onFailure(call: Call<ResponseAuth>, t: Throwable) {
-            Log.d("MyLog", t.message.toString())
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
         }
     })
 }
@@ -257,14 +337,13 @@ private fun getToken(context: Context, email: String, password: String){
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 tokenManager.saveToken(responseBody!!.authToken)
-                Log.d("MyLog", tokenManager.getToken()!!)
             } else {
-                Log.d("MyLog", "not successful ${response.toString()}")
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
             }
         }
 
         override fun onFailure(call: Call<ResponseAuth>, t: Throwable) {
-            Log.d("MyLog", t.message.toString())
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
         }
     })
 

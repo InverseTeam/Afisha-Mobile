@@ -15,4 +15,12 @@
     <string name="text_poster">Афиша</string>
     <string name="text_router">Маршруты</string>
     <string name="text_profile">Профиль</string>
+    <string name="text_incorrect_data_entry">Неверная почта или пароль</string>
+    <string name="text_toast_no_internet">Проверьте подключение к интернету</string>
+    <string name="text_successful_entry">Вы успешно вошли</string>
+    <string name="text_successful_registration">Регистрация прошла успешно</string>
+    <string name="text_appeared_error">Возникла ошибка</string>
+    <string name="text_incorrect_email">Некорректный электронный адрес</string>
+    <string name="text_similar_password">Пароли не совпадают</string>
+    <string name="text_email_exists">Пользователь с такой почтой уже существует</string>
 </resources>

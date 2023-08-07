@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,6 +64,8 @@ import retrofit2.Response
 private lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
+private lateinit var incorrectData: MutableState<Boolean>
+
 
 @Destination
 @Composable
@@ -78,6 +82,10 @@ fun EntryScreen(
     }
 
     apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
+
+    incorrectData = remember {
+        mutableStateOf(false)
+    }
 
     var emailError by remember {
         mutableStateOf(false)
@@ -116,6 +124,7 @@ fun EntryScreen(
             onValueChange = {
                 emailError = false
                 passwordError = false
+                incorrectData.value = false
                 email = it
             },
             borderWidth = if (emailError) 1 else 0,
@@ -129,14 +138,34 @@ fun EntryScreen(
             onValueChange = {
                 emailError = false
                 passwordError = false
+                incorrectData.value = false
                 password = it
             },
             borderWidth = if (passwordError) 1 else 0,
             color = if (passwordError) Error else Color.Transparent
         )
 
+        if (incorrectData.value){
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 8.dp)){
+
+                Text(
+                    text = stringResource(id = R.string.text_incorrect_email),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(400),
+                        color = Error,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.padding(top = 8.dp))
-        
+
         ButtonForEntry(text = stringResource(id = R.string.text_button_entry)){
             if (password.isEmpty()){
                 passwordError = true
@@ -252,16 +281,16 @@ private fun entry(context: Context, navigator: DestinationsNavigator, email: Str
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 tokenManager.saveToken(responseBody!!.authToken)
-                Toast.makeText(context, "Вы успешно вошли", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.text_successful_entry, Toast.LENGTH_SHORT).show()
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             } else {
-                Log.d("MyLog", "not successful ${response.toString()}")
+                incorrectData.value = true
             }
         }
 
         override fun onFailure(call: Call<ResponseAuth>, t: Throwable) {
-            Log.d("MyLog", t.message.toString())
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
         }
     })
 
