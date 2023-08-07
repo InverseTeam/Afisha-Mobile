@@ -23,4 +23,5 @@
     <string name="text_incorrect_email">Некорректный электронный адрес</string>
     <string name="text_similar_password">Пароли не совпадают</string>
     <string name="text_email_exists">Пользователь с такой почтой уже существует</string>
+    <string name="text_password_length">Пароль должен быть больше 8 символов</string>
 </resources>

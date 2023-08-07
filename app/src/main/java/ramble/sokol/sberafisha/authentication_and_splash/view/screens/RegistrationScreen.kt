@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,6 +98,10 @@ fun RegistrationScreen(
         mutableStateOf(false)
     }
 
+    var passwordLength by remember {
+        mutableStateOf(false)
+    }
+
     var passwordConfirmationError by remember {
         mutableStateOf(false)
     }
@@ -139,10 +146,28 @@ fun RegistrationScreen(
                 passwordConfirmationError = false
                 emailIncorrect = false
                 similarPassword = false
+                passwordLength = false
+                incorrectData.value = false
                 email = it
             },
             borderWidth = if (emailError) 1 else 0,
-            color = if (emailError) Error else Color.Transparent
+            color = if (emailError) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                passwordConfirmationError = false
+                                emailIncorrect = false
+                                similarPassword = false
+                                passwordLength = false
+                                incorrectData.value = false
+                            }
+                        }
+                    }
+                }
         )
 
         if (incorrectData.value){
@@ -193,11 +218,48 @@ fun RegistrationScreen(
                 passwordConfirmationError = false
                 emailIncorrect = false
                 similarPassword = false
+                passwordLength = false
+                incorrectData.value = false
                 password = it
             },
             borderWidth = if (passwordError) 1 else 0,
-            color = if (passwordError) Error else Color.Transparent
+            color = if (passwordError) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                passwordConfirmationError = false
+                                emailIncorrect = false
+                                similarPassword = false
+                                passwordLength = false
+                                incorrectData.value = false
+                            }
+                        }
+                    }
+                }
         )
+
+        if (passwordLength){
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 8.dp)){
+
+                Text(
+                    text = stringResource(id = R.string.text_password_length),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(400),
+                        color = Error,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
@@ -209,10 +271,28 @@ fun RegistrationScreen(
                 passwordConfirmationError = false
                 emailIncorrect = false
                 similarPassword = false
+                passwordLength = false
+                incorrectData.value = false
                 passwordConfirmation = it
             },
             borderWidth = if (passwordConfirmationError) 1 else 0,
-            color = if (passwordConfirmationError) Error else Color.Transparent
+            color = if (passwordConfirmationError) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                passwordConfirmationError = false
+                                emailIncorrect = false
+                                similarPassword = false
+                                passwordLength = false
+                                incorrectData.value = false
+                            }
+                        }
+                    }
+                }
         )
 
         if (similarPassword){
@@ -242,8 +322,9 @@ fun RegistrationScreen(
             if (passwordConfirmation.isEmpty()) passwordConfirmationError = true
             if (!isValidEmail(email) && !email.isEmpty()) emailIncorrect = true
             if (password != passwordConfirmation) similarPassword = true
+            if (password.length < 8 && !password.isEmpty()) passwordLength = true
             if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty() &&
-                isValidEmail(email) && password == passwordConfirmation) {
+                isValidEmail(email) && password == passwordConfirmation && password.length >= 8) {
                 registration(mContext, navigator, email, password)
             }
 

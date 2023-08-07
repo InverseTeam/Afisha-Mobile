@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -128,7 +131,19 @@ fun EntryScreen(
                 email = it
             },
             borderWidth = if (emailError) 1 else 0,
-            color = if (emailError) Error else Color.Transparent
+            color = if (emailError) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                incorrectData.value = false
+                            }
+                        }
+                    }
+                }
         )
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -142,7 +157,19 @@ fun EntryScreen(
                 password = it
             },
             borderWidth = if (passwordError) 1 else 0,
-            color = if (passwordError) Error else Color.Transparent
+            color = if (passwordError) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                incorrectData.value = false
+                            }
+                        }
+                    }
+                }
         )
 
         if (incorrectData.value){

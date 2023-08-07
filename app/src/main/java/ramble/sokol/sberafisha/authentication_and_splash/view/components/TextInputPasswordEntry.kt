@@ -4,6 +4,7 @@ package ramble.sokol.sberafisha.authentication_and_splash.view.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,7 +44,8 @@ fun TextInputPasswordEntry(
     text: String,
     onValueChange: (String) -> Unit,
     borderWidth: Int = 1,
-    color: Color = Color.Transparent
+    color: Color = Color.Transparent,
+    interactionSource: MutableInteractionSource
 ){
 
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -62,6 +64,7 @@ fun TextInputPasswordEntry(
             fontWeight = FontWeight(700),
             color = ColorTextField,
         ),
+        interactionSource = interactionSource,
         onValueChange = onValueChange,
         label = {
             Text(
