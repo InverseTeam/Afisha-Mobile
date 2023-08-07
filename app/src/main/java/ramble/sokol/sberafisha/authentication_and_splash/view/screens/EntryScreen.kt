@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,6 +53,7 @@ import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
 import ramble.sokol.sberafisha.model_request.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
+import ramble.sokol.sberafisha.ui.theme.Error
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -76,6 +78,14 @@ fun EntryScreen(
     }
 
     apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
+
+    var emailError by remember {
+        mutableStateOf(false)
+    }
+
+    var passwordError by remember {
+        mutableStateOf(false)
+    }
 
     var email by remember {
         mutableStateOf("")
@@ -104,8 +114,12 @@ fun EntryScreen(
         TextInputEmailEntry(
             text = email,
             onValueChange = {
+                emailError = false
+                passwordError = false
                 email = it
-            }
+            },
+            borderWidth = if (emailError) 1 else 0,
+            color = if (emailError) Error else Color.Transparent
         )
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -113,14 +127,26 @@ fun EntryScreen(
         TextInputPasswordEntry(
             text = password,
             onValueChange = {
+                emailError = false
+                passwordError = false
                 password = it
-            }
+            },
+            borderWidth = if (passwordError) 1 else 0,
+            color = if (passwordError) Error else Color.Transparent
         )
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
         
         ButtonForEntry(text = stringResource(id = R.string.text_button_entry)){
-            entry(mContext, navigator, email, password)
+            if (password.isEmpty()){
+                passwordError = true
+            }
+            if (email.isEmpty()){
+                emailError = true
+            }
+            if (!email.isEmpty() && !password.isEmpty()) {
+                entry(mContext, navigator, email, password)
+            }
         }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))

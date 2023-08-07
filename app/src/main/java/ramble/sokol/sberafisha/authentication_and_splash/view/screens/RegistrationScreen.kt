@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,7 +44,6 @@ import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonF
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
-import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordConfirmationEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
@@ -51,6 +51,7 @@ import ramble.sokol.sberafisha.model_request.RetrofitHelper
 import ramble.sokol.sberafisha.model_request.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
+import ramble.sokol.sberafisha.ui.theme.Error
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -74,6 +75,18 @@ fun RegistrationScreen(
     }
 
     apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
+
+    var emailError by remember {
+        mutableStateOf(false)
+    }
+
+    var passwordError by remember {
+        mutableStateOf(false)
+    }
+
+    var passwordConfirmationError by remember {
+        mutableStateOf(false)
+    }
 
     var email by remember {
         mutableStateOf("")
@@ -106,8 +119,13 @@ fun RegistrationScreen(
         TextInputEmailEntry(
             text = email,
             onValueChange = {
+                emailError = false
+                passwordError = false
+                passwordConfirmationError = false
                 email = it
-            }
+            },
+            borderWidth = if (emailError) 1 else 0,
+            color = if (emailError) Error else Color.Transparent
         )
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -115,23 +133,45 @@ fun RegistrationScreen(
         TextInputPasswordEntry(
             text = password,
             onValueChange = {
+                emailError = false
+                passwordError = false
+                passwordConfirmationError = false
                 password = it
-            }
+            },
+            borderWidth = if (passwordError) 1 else 0,
+            color = if (passwordError) Error else Color.Transparent
         )
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
-        TextInputPasswordConfirmationEntry(
+        TextInputPasswordEntry(
             text = passwordConfirmation,
             onValueChange = {
+                emailError = false
+                passwordError = false
+                passwordConfirmationError = false
                 passwordConfirmation = it
-            }
+            },
+            borderWidth = if (passwordConfirmationError) 1 else 0,
+            color = if (passwordConfirmationError) Error else Color.Transparent
         )
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         ButtonForEntry(text = stringResource(id = R.string.text_register)){
-            registration(mContext, navigator, email, password)
+            if (password.isEmpty()){
+                passwordError = true
+            }
+            if (email.isEmpty()){
+                emailError = true
+            }
+            if (passwordConfirmation.isEmpty()){
+                passwordConfirmationError = true
+            }
+            if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty()) {
+                registration(mContext, navigator, email, password)
+            }
+
         }
 
         Spacer(modifier = Modifier.padding(top = 153.dp))

@@ -3,10 +3,13 @@
 package ramble.sokol.sberafisha.authentication_and_splash.view.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +18,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -30,16 +34,20 @@ import ramble.sokol.sberafisha.ui.theme.ColorBackgroundButton
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundTextField
 import ramble.sokol.sberafisha.ui.theme.ColorTextField
 import ramble.sokol.sberafisha.ui.theme.ColorTextHint
+import ramble.sokol.sberafisha.ui.theme.Error
 
 @Composable
 fun TextInputEmailEntry(
     text: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    borderWidth: Int = 1,
+    color: Color = Color.Transparent
 ){
     TextField(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp),
+            .height(60.dp)
+            .border(width = borderWidth.dp, color = color, shape = RoundedCornerShape(15.dp)),
         shape = RoundedCornerShape(15.dp),
         value = text,
         textStyle = TextStyle(

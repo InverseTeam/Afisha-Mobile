@@ -1,4 +1,4 @@
-package ramble.sokol.sberafisha.main
+package ramble.sokol.sberafisha.main.activities
 
 import android.content.Context
 import android.os.Build
