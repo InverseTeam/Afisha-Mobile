@@ -385,6 +385,7 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
     val body = JsonObject().apply {
         addProperty("email", email)
         addProperty("password", password)
+        addProperty("role", 1)
     }
     val call = apiAuth.createAccount(body)
 

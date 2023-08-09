@@ -15,4 +15,6 @@ interface APIAuth {
 
     @POST("api/users/auth/users/")
     fun createAccount(@Body body: JsonObject): Call<ResponseAuth>
+
+
 }

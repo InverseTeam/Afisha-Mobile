@@ -24,4 +24,15 @@
     <string name="text_similar_password">Пароли не совпадают</string>
     <string name="text_email_exists">Пользователь с такой почтой уже существует</string>
     <string name="text_password_length">Пароль должен быть больше 8 символов</string>
+    <string name="text_search">Поиск</string>
+    <string name="text_create_route">Составить\nмаршрут</string>
+    <string name="text_your_routes">Ваши маршруты</string>
+    <string name="text_name">Имя</string>
+    <string name="text_surname">Фамилия</string>
+    <string name="text_age">Возраст</string>
+    <string name="text_language">Язык</string>
+    <string name="text_russian">Русский</string>
+    <string name="text_english">Английский</string>
+    <string name="text_armenian">Армянский</string>
+    <string name="text_change">Изменить</string>
 </resources>

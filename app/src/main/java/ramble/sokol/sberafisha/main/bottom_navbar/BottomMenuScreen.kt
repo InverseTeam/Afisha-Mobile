@@ -32,10 +32,10 @@ import ramble.sokol.sberafisha.ui.theme.ColorTextHint
 import ramble.sokol.sberafisha.ui.theme.ColorTrueNav
 import ramble.sokol.sberafisha.ui.theme.White
 import com.ramcosta.composedestinations.annotation.Destination
-import ramble.sokol.sberafisha.AfishaScreen
-import ramble.sokol.sberafisha.ProfileScreen
+import ramble.sokol.sberafisha.afisha.view.screens.AfishaScreen
+import ramble.sokol.sberafisha.profile.view.screens.ProfileScreen
 import ramble.sokol.sberafisha.R
-import ramble.sokol.sberafisha.RouteScreen
+import ramble.sokol.sberafisha.routes.view.screens.RouteScreen
 
 @Destination
 @Composable
@@ -44,7 +44,7 @@ fun BottomMenuScreen(
 ){
 
     var selectedItem by rememberSaveable {
-        mutableIntStateOf(0)
+        mutableIntStateOf(1)
     }
 
     Column(
