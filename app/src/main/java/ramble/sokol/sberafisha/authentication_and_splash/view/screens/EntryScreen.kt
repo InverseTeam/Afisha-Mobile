@@ -1,7 +1,6 @@
 package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -42,20 +41,19 @@ import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import ramble.sokol.sberafisha.R
-import ramble.sokol.sberafisha.model_request.RetrofitHelper
+import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.authentication_and_splash.domain.model.ResponseAuth
 import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.ProgressBarAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
-import ramble.sokol.sberafisha.model_request.TokenManager
+import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
 import ramble.sokol.sberafisha.ui.theme.Error
@@ -68,6 +66,7 @@ private lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
 private lateinit var incorrectData: MutableState<Boolean>
+private lateinit var progressEntryState: MutableState<Boolean>
 
 
 @Destination
@@ -87,6 +86,10 @@ fun EntryScreen(
     apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
 
     incorrectData = remember {
+        mutableStateOf(false)
+    }
+
+    progressEntryState = remember {
         mutableStateOf(false)
     }
 
@@ -178,7 +181,7 @@ fun EntryScreen(
                 .padding(start = 4.dp, top = 8.dp)){
 
                 Text(
-                    text = stringResource(id = R.string.text_incorrect_email),
+                    text = stringResource(id = R.string.text_incorrect_data_entry),
                     style = TextStyle(
                         fontSize = 12.sp,
                         lineHeight = 24.sp,
@@ -193,16 +196,28 @@ fun EntryScreen(
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
-        ButtonForEntry(text = stringResource(id = R.string.text_button_entry)){
-            if (password.isEmpty()){
-                passwordError = true
+        if (progressEntryState.value){
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ){
+                ProgressBarAuth()
             }
-            if (email.isEmpty()){
-                emailError = true
+        }else{
+            ButtonForEntry(text = stringResource(id = R.string.text_button_entry)){
+                if (password.isEmpty()){
+                    passwordError = true
+                }
+                if (email.isEmpty()){
+                    emailError = true
+                }
+                if (!email.isEmpty() && !password.isEmpty()) {
+                    progressEntryState.value = true
+                    entry(mContext, navigator, email, password)
+                }
             }
-            if (!email.isEmpty() && !password.isEmpty()) {
-                entry(mContext, navigator, email, password)
-            }
+
         }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -297,6 +312,7 @@ fun EntryScreen(
 }
 
 private fun entry(context: Context, navigator: DestinationsNavigator, email: String, password: String){
+
     val body = JsonObject().apply {
         addProperty("email", email)
         addProperty("password", password)
@@ -308,16 +324,19 @@ private fun entry(context: Context, navigator: DestinationsNavigator, email: Str
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 tokenManager.saveToken(responseBody!!.authToken)
+                progressEntryState.value = false
                 Toast.makeText(context, R.string.text_successful_entry, Toast.LENGTH_SHORT).show()
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             } else {
+                progressEntryState.value = false
                 incorrectData.value = true
             }
         }
 
         override fun onFailure(call: Call<ResponseAuth>, t: Throwable) {
             Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+            progressEntryState.value = false
         }
     })
 

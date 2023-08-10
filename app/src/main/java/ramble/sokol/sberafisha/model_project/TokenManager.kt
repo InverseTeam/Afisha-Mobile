@@ -1,4 +1,4 @@
-package ramble.sokol.sberafisha.model_request
+package ramble.sokol.sberafisha.model_project
 
 import android.content.Context
 

@@ -1,7 +1,6 @@
 package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -10,7 +9,6 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,14 +44,14 @@ import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.authentication_and_splash.domain.model.ResponseAuth
 import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
-import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntrySber
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.ProgressBarAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
-import ramble.sokol.sberafisha.model_request.RetrofitHelper
-import ramble.sokol.sberafisha.model_request.TokenManager
+import ramble.sokol.sberafisha.model_project.RetrofitHelper
+import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
 import ramble.sokol.sberafisha.ui.theme.Error
@@ -65,6 +63,7 @@ private lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
 private lateinit var incorrectData: MutableState<Boolean>
+private lateinit var progressEntryState: MutableState<Boolean>
 
 @Destination
 @Composable
@@ -83,6 +82,10 @@ fun RegistrationScreen(
     apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
 
     incorrectData = remember {
+        mutableStateOf(false)
+    }
+
+    progressEntryState = remember {
         mutableStateOf(false)
     }
 
@@ -316,18 +319,30 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
-        ButtonForEntry(text = stringResource(id = R.string.text_register)){
-            if (password.isEmpty()) passwordError = true
-            if (email.isEmpty()) emailError = true
-            if (passwordConfirmation.isEmpty()) passwordConfirmationError = true
-            if (!isValidEmail(email) && !email.isEmpty()) emailIncorrect = true
-            if (password != passwordConfirmation) similarPassword = true
-            if (password.length < 8 && !password.isEmpty()) passwordLength = true
-            if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty() &&
-                isValidEmail(email) && password == passwordConfirmation && password.length >= 8) {
-                registration(mContext, navigator, email, password)
+        if (progressEntryState.value){
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ){
+                ProgressBarAuth()
             }
+        }else {
 
+            ButtonForEntry(text = stringResource(id = R.string.text_register)) {
+                if (password.isEmpty()) passwordError = true
+                if (email.isEmpty()) emailError = true
+                if (passwordConfirmation.isEmpty()) passwordConfirmationError = true
+                if (!isValidEmail(email) && !email.isEmpty()) emailIncorrect = true
+                if (password != passwordConfirmation) similarPassword = true
+                if (password.length < 8 && !password.isEmpty()) passwordLength = true
+                if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty() &&
+                    isValidEmail(email) && password == passwordConfirmation && password.length >= 8
+                ) {
+                    progressEntryState.value = true
+                    registration(mContext, navigator, email, password)
+                }
+
+            }
         }
 
         Spacer(modifier = Modifier.padding(top = 153.dp))
@@ -393,16 +408,19 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
         override fun onResponse(call: Call<ResponseAuth>, response: Response<ResponseAuth>) {
             if (response.isSuccessful) {
                 getToken(context, email, password)
+                progressEntryState.value = false
                 Toast.makeText(context, R.string.text_successful_registration, Toast.LENGTH_SHORT).show()
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             } else {
                 incorrectData.value = true
+                progressEntryState.value = false
             }
         }
 
         override fun onFailure(call: Call<ResponseAuth>, t: Throwable) {
             Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+            progressEntryState.value = false
         }
     })
 }
@@ -421,11 +439,13 @@ private fun getToken(context: Context, email: String, password: String){
                 tokenManager.saveToken(responseBody!!.authToken)
             } else {
                 Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+                progressEntryState.value = false
             }
         }
 
         override fun onFailure(call: Call<ResponseAuth>, t: Throwable) {
             Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+            progressEntryState.value = false
         }
     })
 

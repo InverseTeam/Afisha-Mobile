@@ -18,9 +18,4 @@ interface APIAuth {
 
     @POST("api/users/auth/users/")
     fun createAccount(@Body body: JsonObject): Call<ResponseAuth>
-
-    //@PATCH("api/users/auth/users/me/")
-
-    @GET("api/users/auth/users/me/")
-    fun getMyAccount(@Header("Authorization") token: String): Call<ResponseUserInfo>
 }

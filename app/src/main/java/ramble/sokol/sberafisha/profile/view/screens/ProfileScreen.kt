@@ -1,7 +1,6 @@
 package ramble.sokol.sberafisha.profile.view.screens
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -31,18 +30,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
-import ramble.sokol.sberafisha.authentication_and_splash.domain.model.ResponseAuth
-import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
-import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
-import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
-import ramble.sokol.sberafisha.model_request.RetrofitHelper
-import ramble.sokol.sberafisha.model_request.TokenManager
+import ramble.sokol.sberafisha.model_project.RetrofitHelper
+import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.profile.domain.models.ResponseUserInfo
+import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
 import ramble.sokol.sberafisha.profile.view.components.DropDownLanguageProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputAgeProfile
@@ -53,7 +47,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-private lateinit var apiAuth: APIAuth
+private lateinit var apiProfile: APIProfile
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
 private lateinit var name: MutableState<String>
@@ -72,7 +66,7 @@ fun ProfileScreen(){
         throwable.printStackTrace()
     }
 
-    apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
+    apiProfile = RetrofitHelper.getInstance().create(APIProfile::class.java)
 
     name = remember {
         mutableStateOf("")
@@ -191,7 +185,7 @@ fun ProfileScreen(){
 }
 
 private fun getData(context: Context){
-    val call = apiAuth.getMyAccount("Token ${tokenManager.getToken()}")
+    val call = apiProfile.getMyAccount("Token ${tokenManager.getToken()}")
 
     call.enqueue(object : Callback<ResponseUserInfo> {
         override fun onResponse(call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>) {
