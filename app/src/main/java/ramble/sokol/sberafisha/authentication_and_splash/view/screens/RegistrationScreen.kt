@@ -50,6 +50,7 @@ import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInp
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
@@ -63,6 +64,7 @@ private lateinit var apiAuth: APIAuth
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
 private lateinit var incorrectData: MutableState<Boolean>
+private lateinit var firstEntryManager: FirstEntryManager
 private lateinit var progressEntryState: MutableState<Boolean>
 
 @Destination
@@ -74,6 +76,8 @@ fun RegistrationScreen(
     val mContext = LocalContext.current
 
     tokenManager = TokenManager(mContext)
+
+    firstEntryManager = FirstEntryManager(mContext)
 
     coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
@@ -408,6 +412,7 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
         override fun onResponse(call: Call<ResponseAuth>, response: Response<ResponseAuth>) {
             if (response.isSuccessful) {
                 getToken(context, email, password)
+                firstEntryManager.saveFirstEntry(true)
                 progressEntryState.value = false
                 Toast.makeText(context, R.string.text_successful_registration, Toast.LENGTH_SHORT).show()
                 navigator.popBackStack()

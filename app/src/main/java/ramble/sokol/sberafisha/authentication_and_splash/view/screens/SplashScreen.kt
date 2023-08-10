@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,16 +28,25 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.model_project.FirstEntryManager
+import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.ui.theme.SberAfishaTheme
 import ramble.sokol.sberafisha.ui.theme.White
 
+private lateinit var firstEntryManager: FirstEntryManager
 
 @Destination(start = true)
 @Composable
 fun SplashScreen(
     navigator: DestinationsNavigator
 ) {
+
+    val mContext = LocalContext.current
+
+    firstEntryManager = FirstEntryManager(mContext)
+
 
         val transition = rememberInfiniteTransition()
         val alpha by transition.animateFloat(
@@ -55,7 +65,11 @@ fun SplashScreen(
         ) {
             delay(3000L)
             navigator.popBackStack()
-            navigator.navigate(EntryScreenDestination)
+            if (firstEntryManager.getFirstEntry() == true){
+                navigator.navigate(BottomMenuScreenDestination)
+            }else{
+                navigator.navigate(EntryScreenDestination)
+            }
         }
 
         Column(
