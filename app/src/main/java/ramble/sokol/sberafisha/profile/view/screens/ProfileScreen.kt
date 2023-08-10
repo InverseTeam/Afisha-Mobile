@@ -1,5 +1,8 @@
 package ramble.sokol.sberafisha.profile.view.screens
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +15,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -26,31 +31,64 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.authentication_and_splash.domain.model.ResponseAuth
+import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
+import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.model_request.RetrofitHelper
+import ramble.sokol.sberafisha.model_request.TokenManager
+import ramble.sokol.sberafisha.profile.domain.models.ResponseUserInfo
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
 import ramble.sokol.sberafisha.profile.view.components.DropDownLanguageProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputAgeProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputNameProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputSurnameProfile
 import ramble.sokol.sberafisha.ui.theme.TextTitle
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+private lateinit var apiAuth: APIAuth
+private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
+private lateinit var tokenManager: TokenManager
+private lateinit var name: MutableState<String>
+private lateinit var surname: MutableState<String>
+private lateinit var age: MutableState<String>
 
 @Destination
 @Composable
 fun ProfileScreen(){
 
-    var name by remember {
-        mutableStateOf("Иван")
+    val mContext = LocalContext.current
+
+    tokenManager = TokenManager(mContext)
+
+    coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+        throwable.printStackTrace()
     }
 
-    var surname by remember {
-        mutableStateOf("Иванов")
+    apiAuth = RetrofitHelper.getInstance().create(APIAuth::class.java)
+
+    name = remember {
+        mutableStateOf("")
     }
 
-    var age by remember {
-        mutableStateOf("18")
+    surname = remember {
+        mutableStateOf("")
     }
+
+    age = remember {
+        mutableStateOf("")
+    }
+
+    getData(mContext)
+
+
 
     var language by remember {
         mutableStateOf("Русский")
@@ -79,9 +117,9 @@ fun ProfileScreen(){
         Spacer(modifier = Modifier.padding(top = 24.dp))
 
         TextInputNameProfile(
-            text = name,
+            text = name.value,
             onValueChange = {
-                name = it
+                name.value = it
             },
             interactionSource = remember { MutableInteractionSource() }
                 .also { interactionSource ->
@@ -98,9 +136,9 @@ fun ProfileScreen(){
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         TextInputSurnameProfile(
-            text = surname,
+            text = surname.value,
             onValueChange = {
-                surname = it
+                surname.value = it
             },
             interactionSource = remember {
                 MutableInteractionSource()
@@ -119,9 +157,9 @@ fun ProfileScreen(){
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         TextInputAgeProfile(
-            text = age,
+            text = age.value,
             onValueChange = {
-                age = it
+                age.value = it
             },
             interactionSource = remember {
                 MutableInteractionSource()
@@ -150,4 +188,29 @@ fun ProfileScreen(){
         }
 
     }
+}
+
+private fun getData(context: Context){
+    val call = apiAuth.getMyAccount("Token ${tokenManager.getToken()}")
+
+    call.enqueue(object : Callback<ResponseUserInfo> {
+        override fun onResponse(call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                age.value = responseBody!!.age
+                if (age.value == null){
+                    age.value = ""
+                }
+                name.value = responseBody.firstname
+                surname.value = responseBody.lastname
+            } else {
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
+
 }
