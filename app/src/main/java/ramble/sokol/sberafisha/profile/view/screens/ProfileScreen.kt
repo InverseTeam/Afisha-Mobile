@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
@@ -176,10 +177,25 @@ fun ProfileScreen(){
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         ButtonChangeProfile(
-            text = stringResource(id = R.string.text_change)
+            text = stringResource(id = R.string.text_save)
         ) {
-
+            patchData(mContext)
         }
+
+        Spacer(modifier = Modifier.padding(top = 32.dp))
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(id = R.string.text_tickets),
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontFamily = FontFamily(Font(R.font.mont_bold)),
+                fontWeight = FontWeight(800),
+                color = TextTitle,
+                letterSpacing = 0.24.sp,
+                textAlign = TextAlign.Left
+            )
+        )
 
     }
 }
@@ -197,6 +213,32 @@ private fun getData(context: Context){
                 }
                 name.value = responseBody.firstname
                 surname.value = responseBody.lastname
+            } else {
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
+
+}
+
+private fun patchData(context: Context){
+
+    val body = JsonObject().apply {
+        addProperty("firstname", name.value)
+        addProperty("lastname", surname.value)
+        addProperty("age", age.value)
+    }
+
+    val call = apiProfile.patchMyAccount("Token ${tokenManager.getToken()}", body)
+
+    call.enqueue(object : Callback<ResponseUserInfo> {
+        override fun onResponse(call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>) {
+            if (response.isSuccessful) {
+                Toast.makeText(context, R.string.text_data_upgrade, Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
             }

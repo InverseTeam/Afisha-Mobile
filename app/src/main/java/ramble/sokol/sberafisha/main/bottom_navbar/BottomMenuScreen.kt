@@ -149,7 +149,7 @@ fun BottomMenuScreen(
 
     when (selectedItem){
         0 -> AfishaScreen()
-        1 -> RouteScreen()
+        1 -> RouteScreen(navigator)
         2 -> ProfileScreen()
     }
 
