@@ -1,6 +1,7 @@
 package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -52,6 +53,7 @@ import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
+import ramble.sokol.sberafisha.model_project.RoleManager
 import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorActionText
 import ramble.sokol.sberafisha.ui.theme.ColorText
@@ -65,6 +67,7 @@ private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
 private lateinit var incorrectData: MutableState<Boolean>
 private lateinit var firstEntryManager: FirstEntryManager
+private lateinit var roleManager: RoleManager
 private lateinit var progressEntryState: MutableState<Boolean>
 
 @Destination
@@ -78,6 +81,8 @@ fun RegistrationScreen(
     tokenManager = TokenManager(mContext)
 
     firstEntryManager = FirstEntryManager(mContext)
+
+    roleManager = RoleManager(mContext)
 
     coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
@@ -94,10 +99,6 @@ fun RegistrationScreen(
     }
 
     var emailError by remember {
-        mutableStateOf(false)
-    }
-
-    var emailIncorrect by remember {
         mutableStateOf(false)
     }
 
@@ -151,7 +152,6 @@ fun RegistrationScreen(
                 emailError = false
                 passwordError = false
                 passwordConfirmationError = false
-                emailIncorrect = false
                 similarPassword = false
                 passwordLength = false
                 incorrectData.value = false
@@ -167,7 +167,6 @@ fun RegistrationScreen(
                                 emailError = false
                                 passwordError = false
                                 passwordConfirmationError = false
-                                emailIncorrect = false
                                 similarPassword = false
                                 passwordLength = false
                                 incorrectData.value = false
@@ -196,25 +195,6 @@ fun RegistrationScreen(
             }
         }
 
-        if (emailIncorrect){
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp, top = 8.dp)){
-
-                Text(
-                    text = stringResource(id = R.string.text_incorrect_email),
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        lineHeight = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
-                        fontWeight = FontWeight(400),
-                        color = Error,
-                        textAlign = TextAlign.Center,
-                    )
-                )
-            }
-        }
-
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
         TextInputPasswordEntry(
@@ -223,7 +203,6 @@ fun RegistrationScreen(
                 emailError = false
                 passwordError = false
                 passwordConfirmationError = false
-                emailIncorrect = false
                 similarPassword = false
                 passwordLength = false
                 incorrectData.value = false
@@ -239,7 +218,6 @@ fun RegistrationScreen(
                                 emailError = false
                                 passwordError = false
                                 passwordConfirmationError = false
-                                emailIncorrect = false
                                 similarPassword = false
                                 passwordLength = false
                                 incorrectData.value = false
@@ -276,7 +254,6 @@ fun RegistrationScreen(
                 emailError = false
                 passwordError = false
                 passwordConfirmationError = false
-                emailIncorrect = false
                 similarPassword = false
                 passwordLength = false
                 incorrectData.value = false
@@ -292,7 +269,6 @@ fun RegistrationScreen(
                                 emailError = false
                                 passwordError = false
                                 passwordConfirmationError = false
-                                emailIncorrect = false
                                 similarPassword = false
                                 passwordLength = false
                                 incorrectData.value = false
@@ -336,13 +312,13 @@ fun RegistrationScreen(
                 if (password.isEmpty()) passwordError = true
                 if (email.isEmpty()) emailError = true
                 if (passwordConfirmation.isEmpty()) passwordConfirmationError = true
-                if (!isValidEmail(email) && !email.isEmpty()) emailIncorrect = true
                 if (password != passwordConfirmation) similarPassword = true
                 if (password.length < 8 && !password.isEmpty()) passwordLength = true
-                if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty() &&
-                    isValidEmail(email) && password == passwordConfirmation && password.length >= 8
+                if (!email.isEmpty() && !password.isEmpty() && !passwordConfirmation.isEmpty()
+                    && password == passwordConfirmation && password.length >= 8
                 ) {
                     progressEntryState.value = true
+                    Log.d("MyLog", "Click")
                     registration(mContext, navigator, email, password)
                 }
 
@@ -395,16 +371,16 @@ fun RegistrationScreen(
     }
 }
 
-private fun isValidEmail(email: String): Boolean {
-    val emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
-    return email.matches(emailRegex)
-}
+//private fun isValidEmail(email: String): Boolean {
+//    val emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
+//    return email.matches(emailRegex)
+//}
 
 fun registration(context: Context, navigator: DestinationsNavigator, email: String, password: String){
     val body = JsonObject().apply {
-        addProperty("email", email)
+        addProperty("username", email)
         addProperty("password", password)
-        addProperty("role", 1)
+        addProperty("role", roleManager.getRole())
     }
     val call = apiAuth.createAccount(body)
 
@@ -418,6 +394,7 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             } else {
+                Log.d("MyLog", response.toString())
                 incorrectData.value = true
                 progressEntryState.value = false
             }
@@ -432,7 +409,7 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
 
 private fun getToken(context: Context, email: String, password: String){
     val body = JsonObject().apply {
-        addProperty("email", email)
+        addProperty("username", email)
         addProperty("password", password)
     }
     val call = apiAuth.entryAndGetToken(body)

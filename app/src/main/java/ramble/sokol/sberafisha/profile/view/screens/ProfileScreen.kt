@@ -39,6 +39,7 @@ import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.destinations.ProfileScreenDestination
 import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
@@ -257,7 +258,7 @@ fun ProfileScreen(
                 tokenManager.saveToken("")
                 firstEntryManager.saveFirstEntry(false)
                 navigator.popBackStack()
-                navigator.navigate(EntryScreenDestination)
+                navigator.navigate(ProfileScreenDestination)
             }
 
             Spacer(modifier = Modifier.padding(top = 32.dp))

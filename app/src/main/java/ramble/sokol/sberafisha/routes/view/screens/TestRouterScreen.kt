@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.RouteScreenDestination
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
 import ramble.sokol.sberafisha.routes.domain.models.DataForTest
@@ -74,7 +75,7 @@ fun TestRouterScreen(
                     .height(24.dp)
                     .clickable {
                         navigator.popBackStack()
-                        navigator.navigate(RouteScreenDestination)
+                        navigator.navigate(BottomMenuScreenDestination)
                     },
                 painter = painterResource(id = R.drawable.image_button_back),
                 contentDescription = "image button back")

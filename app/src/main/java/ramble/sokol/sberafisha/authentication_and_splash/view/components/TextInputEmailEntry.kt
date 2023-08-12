@@ -63,7 +63,7 @@ fun TextInputEmailEntry(
         onValueChange = onValueChange,
         label = {
             Text(
-                stringResource(id = R.string.text_hint_email),
+                stringResource(id = R.string.text_username),
                 style = TextStyle(
                     color = ColorTextHint,
                     fontFamily = FontFamily(Font(R.font.mont_semibold)),
@@ -78,7 +78,6 @@ fun TextInputEmailEntry(
             focusedIndicatorColor = Color.Transparent,
             containerColor = ColorBackgroundTextField
         ),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        singleLine = true
         )
 }

@@ -5,6 +5,7 @@
     <string name="text_recover">Восстановить</string>
     <string name="text_button_entry_sberid">Войти со Sber ID</string>
     <string name="text_hint_email">Почта</string>
+    <string name="text_username">Логин</string>
     <string name="text_hint_password">Пароль</string>
     <string name="text_hint_password_confirmation">Подтверждение пароля</string>
     <string name="text_registration">Регистрация</string>
@@ -15,14 +16,14 @@
     <string name="text_poster">Афиша</string>
     <string name="text_router">Маршруты</string>
     <string name="text_profile">Профиль</string>
-    <string name="text_incorrect_data_entry">Неверная почта или пароль</string>
+    <string name="text_incorrect_data_entry">Неверный логин или пароль</string>
     <string name="text_toast_no_internet">Проверьте подключение к интернету</string>
     <string name="text_successful_entry">Вы успешно вошли</string>
     <string name="text_successful_registration">Регистрация прошла успешно</string>
     <string name="text_appeared_error">Возникла ошибка</string>
     <string name="text_incorrect_email">Некорректный электронный адрес</string>
     <string name="text_similar_password">Пароли не совпадают</string>
-    <string name="text_email_exists">Пользователь с такой почтой уже существует</string>
+    <string name="text_email_exists">Пользователь с таким логином уже существует</string>
     <string name="text_password_length">Пароль должен быть больше 8 символов</string>
     <string name="text_search">Поиск</string>
     <string name="text_create_route">Составить\nмаршрут</string>
