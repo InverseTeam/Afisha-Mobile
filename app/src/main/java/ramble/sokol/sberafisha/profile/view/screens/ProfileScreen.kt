@@ -2,16 +2,21 @@ package ramble.sokol.sberafisha.profile.view.screens
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -38,6 +44,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
+import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.destinations.ProfileScreenDestination
 import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
@@ -53,6 +60,7 @@ import ramble.sokol.sberafisha.profile.view.components.DropDownLanguageProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputAgeProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputNameProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputSurnameProfile
+import ramble.sokol.sberafisha.ui.theme.ColorTextField
 import ramble.sokol.sberafisha.ui.theme.ColorTextHint
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import retrofit2.Call
@@ -154,6 +162,7 @@ fun ProfileScreen(
             mutableStateOf("Русский")
         }
 
+        var expanded by remember { mutableStateOf(false)}
 
         getData(mContext)
 
@@ -240,7 +249,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
-            DropDownLanguageProfile()
+            // drop down
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
@@ -258,7 +267,7 @@ fun ProfileScreen(
                 tokenManager.saveToken("")
                 firstEntryManager.saveFirstEntry(false)
                 navigator.popBackStack()
-                navigator.navigate(ProfileScreenDestination)
+                navigator.navigate(BottomMenuScreenDestination)
             }
 
             Spacer(modifier = Modifier.padding(top = 32.dp))

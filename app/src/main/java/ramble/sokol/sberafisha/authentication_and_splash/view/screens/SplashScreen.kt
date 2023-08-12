@@ -28,6 +28,7 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.destinations.AdScreenDestination
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.destinations.StartTestScreenDestination
@@ -67,13 +68,7 @@ fun SplashScreen(
         ) {
             delay(3000L)
             navigator.popBackStack()
-            if (firstEntryManager.getFirstEntry() == true || firstEntryManager.getFirstTest() == true){
-                navigator.popBackStack()
-                navigator.navigate(BottomMenuScreenDestination)
-            }else{
-                navigator.popBackStack()
-                navigator.navigate(StartTestScreenDestination)
-            }
+            navigator.navigate(AdScreenDestination)
         }
 
         Column(

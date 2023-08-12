@@ -1,5 +1,7 @@
 package ramble.sokol.sberafisha.start_test.view.screeens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,12 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
+import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.model_project.RoleManager
+import ramble.sokol.sberafisha.model_project.TokenManager
+import ramble.sokol.sberafisha.profile.domain.models.ResponseUserInfo
+import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.start_test.view.components.BoxTest
 import ramble.sokol.sberafisha.start_test.view.components.ButtonFurtherStartTest
 import ramble.sokol.sberafisha.ui.theme.BoxBackTest
@@ -39,10 +46,15 @@ import ramble.sokol.sberafisha.ui.theme.ColorTextHint
 import ramble.sokol.sberafisha.ui.theme.ColorTextSecond
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import ramble.sokol.sberafisha.ui.theme.White
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 private lateinit var roleManager: RoleManager
 private lateinit var firstEntryManager: FirstEntryManager
+private lateinit var tokenManager: TokenManager
+private lateinit var apiProfile: APIProfile
 
 @Composable
 @Destination
@@ -55,6 +67,12 @@ fun StartTestScreen(
     roleManager = RoleManager(context)
 
     firstEntryManager = FirstEntryManager(context)
+
+    tokenManager = TokenManager(context)
+
+    firstEntryManager = FirstEntryManager(context)
+
+    apiProfile = RetrofitHelper.getInstance().create(APIProfile::class.java)
 
     var clickNumber by remember {
         mutableIntStateOf(0)
@@ -145,6 +163,7 @@ fun StartTestScreen(
                     text = stringResource(id = R.string.text_to_app)) {
                     roleManager.saveRole(clickNumber)
                     firstEntryManager.saveFirstTest(true)
+                    patchData(context = context, clickNumber)
                     navigator.popBackStack()
                     navigator.navigate(BottomMenuScreenDestination)
                 }
@@ -153,5 +172,29 @@ fun StartTestScreen(
         }
 
     }
+
+}
+
+private fun patchData(context: Context, num: Int){
+
+    val body = JsonObject().apply {
+        addProperty("role", num)
+    }
+
+    val call = apiProfile.patchMyAccount("Token ${tokenManager.getToken()}", body)
+
+    call.enqueue(object : Callback<ResponseUserInfo> {
+        override fun onResponse(call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>) {
+            if (response.isSuccessful) {
+                Toast.makeText(context, R.string.text_data_save, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
 
 }

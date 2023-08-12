@@ -37,6 +37,7 @@
     <string name="text_armenian">Армянский</string>
     <string name="text_save">Сохранить</string>
     <string name="text_data_upgrade">Данные успешно изменены</string>
+    <string name="text_data_save">Данные успешно сохранены</string>
     <string name="text_tickets">Билеты</string>
     <string name="text_recommendations">Рекомендации</string>
     <string name="text_change_date">Изменить дату</string>
@@ -55,5 +56,8 @@
     <string name="text_hint_start_test">Это поможет подобрать самые интересные события</string>
     <string name="text_to_app">В приложение</string>
     <string name="text_entry_account">Войти в аккаунт</string>
+    <string name="text_ad_title">Матч\nЕкатеринбург - Сочи</string>
+    <string name="text_ad_date">30 июля, ДИВС</string>
+    <string name="text_about_events">О мероприятии</string>
     <string name="text_profile_description">Что-бы создавать маршруты, сохранять в избранное и записываться на мероприятия войдите или зарегистрируйтесь</string>
 </resources>

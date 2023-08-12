@@ -51,6 +51,7 @@ import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInp
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.destinations.StartTestScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.model_project.RoleManager
@@ -380,7 +381,6 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
     val body = JsonObject().apply {
         addProperty("username", email)
         addProperty("password", password)
-        addProperty("role", roleManager.getRole())
     }
     val call = apiAuth.createAccount(body)
 
@@ -392,7 +392,7 @@ fun registration(context: Context, navigator: DestinationsNavigator, email: Stri
                 progressEntryState.value = false
                 Toast.makeText(context, R.string.text_successful_registration, Toast.LENGTH_SHORT).show()
                 navigator.popBackStack()
-                navigator.navigate(BottomMenuScreenDestination)
+                navigator.navigate(StartTestScreenDestination)
             } else {
                 Log.d("MyLog", response.toString())
                 incorrectData.value = true
