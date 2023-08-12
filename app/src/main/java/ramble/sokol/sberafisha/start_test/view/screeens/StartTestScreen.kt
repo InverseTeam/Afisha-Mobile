@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -27,6 +28,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.model_project.FirstEntryManager
+import ramble.sokol.sberafisha.model_project.RoleManager
 import ramble.sokol.sberafisha.start_test.view.components.BoxTest
 import ramble.sokol.sberafisha.start_test.view.components.ButtonFurtherStartTest
 import ramble.sokol.sberafisha.ui.theme.BoxBackTest
@@ -37,11 +40,21 @@ import ramble.sokol.sberafisha.ui.theme.ColorTextSecond
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import ramble.sokol.sberafisha.ui.theme.White
 
+
+private lateinit var roleManager: RoleManager
+private lateinit var firstEntryManager: FirstEntryManager
+
 @Composable
 @Destination
 fun StartTestScreen(
     navigator: DestinationsNavigator
 ){
+
+    val context = LocalContext.current
+
+    roleManager = RoleManager(context)
+
+    firstEntryManager = FirstEntryManager(context)
 
     var clickNumber by remember {
         mutableIntStateOf(0)
@@ -130,6 +143,8 @@ fun StartTestScreen(
             if (clickNumber != 0){
                 ButtonFurtherStartTest(
                     text = stringResource(id = R.string.text_to_app)) {
+                    roleManager.saveRole(clickNumber)
+                    firstEntryManager.saveFirstTest(true)
                     navigator.popBackStack()
                     navigator.navigate(BottomMenuScreenDestination)
                 }

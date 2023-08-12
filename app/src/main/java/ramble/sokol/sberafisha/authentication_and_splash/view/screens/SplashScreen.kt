@@ -50,7 +50,7 @@ fun SplashScreen(
     firstEntryManager = FirstEntryManager(mContext)
 
 
-        val transition = rememberInfiniteTransition()
+        val transition = rememberInfiniteTransition(label = "")
         val alpha by transition.animateFloat(
             initialValue = 0f,
             targetValue = 1f,
@@ -67,7 +67,7 @@ fun SplashScreen(
         ) {
             delay(3000L)
             navigator.popBackStack()
-            if (firstEntryManager.getFirstEntry() == true){
+            if (firstEntryManager.getFirstEntry() == true || firstEntryManager.getFirstTest() == true){
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             }else{
