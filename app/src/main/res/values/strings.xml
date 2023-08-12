@@ -47,4 +47,10 @@
     <string name="text_main_hint_test">Мы используем эти данные для составления оптимального маршрута</string>
     <string name="text_further">Далее</string>
     <string name="text_exit">Выйти</string>
+    <string name="text_title_start_test">Расскажите нам,\nкто вы</string>
+    <string name="text_parent">Родитель</string>
+    <string name="text_teenager">Подросток</string>
+    <string name="text_tourist">Турист</string>
+    <string name="text_hint_start_test">Это поможет подобрать самые интересные события</string>
+    <string name="text_to_app">В приложение</string>
 </resources>

@@ -30,8 +30,10 @@ import kotlinx.coroutines.delay
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.destinations.StartTestScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.TokenManager
+import ramble.sokol.sberafisha.start_test.view.screeens.StartTestScreen
 import ramble.sokol.sberafisha.ui.theme.SberAfishaTheme
 import ramble.sokol.sberafisha.ui.theme.White
 
@@ -66,9 +68,11 @@ fun SplashScreen(
             delay(3000L)
             navigator.popBackStack()
             if (firstEntryManager.getFirstEntry() == true){
+                navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             }else{
-                navigator.navigate(EntryScreenDestination)
+                navigator.popBackStack()
+                navigator.navigate(StartTestScreenDestination)
             }
         }
 
