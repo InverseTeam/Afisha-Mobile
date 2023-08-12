@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -35,7 +36,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.model_project.TokenManager
@@ -43,10 +47,12 @@ import ramble.sokol.sberafisha.profile.domain.models.ResponseUserInfo
 import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonExitProfile
+import ramble.sokol.sberafisha.profile.view.components.ButtonForEntryProfile
 import ramble.sokol.sberafisha.profile.view.components.DropDownLanguageProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputAgeProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputNameProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputSurnameProfile
+import ramble.sokol.sberafisha.ui.theme.ColorTextHint
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import retrofit2.Call
 import retrofit2.Callback
@@ -72,151 +78,204 @@ fun ProfileScreen(
 
     firstEntryManager = FirstEntryManager(mContext)
 
-    coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
-        throwable.printStackTrace()
-    }
+    val checkRegistration = firstEntryManager.getFirstEntry()
 
-    apiProfile = RetrofitHelper.getInstance().create(APIProfile::class.java)
+    if (checkRegistration == false) {
 
-    name = remember {
-        mutableStateOf("")
-    }
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 16.dp, start = 33.dp, end = 33.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-    surname = remember {
-        mutableStateOf("")
-    }
-
-    age = remember {
-        mutableStateOf("")
-    }
-
-    getData(mContext)
-
-
-
-    var language by remember {
-        mutableStateOf("Русский")
-    }
-
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(top = 16.dp, start = 32.dp, end = 32.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.text_profile),
-            style = TextStyle(
-                fontSize = 24.sp,
-                fontFamily = FontFamily(Font(R.font.mont_bold)),
-                fontWeight = FontWeight(800),
-                color = TextTitle,
-                letterSpacing = 0.24.sp,
-                textAlign = TextAlign.Left
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_entry_account),
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.24.sp,
+                    textAlign = TextAlign.Start
+                )
             )
-        )
 
-        Spacer(modifier = Modifier.padding(top = 24.dp))
+            Spacer(modifier = Modifier.padding(top = 8.dp))
 
-        TextInputNameProfile(
-            text = name.value,
-            onValueChange = {
-                name.value = it
-            },
-            interactionSource = remember { MutableInteractionSource() }
-                .also { interactionSource ->
-                    LaunchedEffect(interactionSource) {
-                        interactionSource.interactions.collect {
-                            if (it is PressInteraction.Release) {
-                                // click on textfield
-                            }
-                        }
-                    }
-                }
-        )
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_profile_description),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                    fontWeight = FontWeight(700),
+                    color = ColorTextHint,
+                    textAlign = TextAlign.Start
+                )
+            )
 
-        Spacer(modifier = Modifier.padding(top = 8.dp))
+            Spacer(modifier = Modifier.padding(top = 24.dp))
 
-        TextInputSurnameProfile(
-            text = surname.value,
-            onValueChange = {
-                surname.value = it
-            },
-            interactionSource = remember {
-                MutableInteractionSource()
+            ButtonForEntryProfile(text = stringResource(id = R.string.text_button_entry)) {
+                navigator.navigate(EntryScreenDestination)
             }
-                .also { interactionSource ->
-                    LaunchedEffect(interactionSource) {
-                        interactionSource.interactions.collect {
-                            if (it is PressInteraction.Release) {
-                                // click on textfield
-                            }
-                        }
-                    }
-                }
-        )
+            
+            Spacer(modifier = Modifier.padding(top = 8.dp))
 
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        TextInputAgeProfile(
-            text = age.value,
-            onValueChange = {
-                age.value = it
-            },
-            interactionSource = remember {
-                MutableInteractionSource()
+            ButtonForEntryToRegistration(text = stringResource(id = R.string.text_registration)) {
+                navigator.navigate(RegistrationScreenDestination)
             }
-                .also { interactionSource ->
-                    LaunchedEffect(interactionSource) {
-                        interactionSource.interactions.collect {
-                            if (it is PressInteraction.Release) {
-                                // click on textfield
-                            }
-                        }
-                    }
-                }
-        )
-
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        DropDownLanguageProfile()
-
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        ButtonChangeProfile(
-            text = stringResource(id = R.string.text_save)
-        ) {
-            patchData(mContext)
         }
 
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        ButtonExitProfile(
-            text = stringResource(id = R.string.text_exit)
-        ) {
-            tokenManager.saveToken("")
-            firstEntryManager.saveFirstEntry(false)
-            navigator.popBackStack()
-            navigator.navigate(EntryScreenDestination)
+    }else {
+        coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            throwable.printStackTrace()
         }
 
-        Spacer(modifier = Modifier.padding(top = 32.dp))
+        apiProfile = RetrofitHelper.getInstance().create(APIProfile::class.java)
 
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.text_tickets),
-            style = TextStyle(
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.mont_bold)),
-                fontWeight = FontWeight(800),
-                color = TextTitle,
-                letterSpacing = 0.24.sp,
-                textAlign = TextAlign.Left
+        name = remember {
+            mutableStateOf("")
+        }
+
+        surname = remember {
+            mutableStateOf("")
+        }
+
+        age = remember {
+            mutableStateOf("")
+        }
+
+        var language by remember {
+            mutableStateOf("Русский")
+        }
+
+
+        getData(mContext)
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(top = 16.dp, start = 32.dp, end = 32.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_profile),
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.24.sp,
+                    textAlign = TextAlign.Left
+                )
             )
-        )
 
+            Spacer(modifier = Modifier.padding(top = 24.dp))
+
+            TextInputNameProfile(
+                text = name.value,
+                onValueChange = {
+                    name.value = it
+                },
+                interactionSource = remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    // click on textfield
+                                }
+                            }
+                        }
+                    }
+            )
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            TextInputSurnameProfile(
+                text = surname.value,
+                onValueChange = {
+                    surname.value = it
+                },
+                interactionSource = remember {
+                    MutableInteractionSource()
+                }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    // click on textfield
+                                }
+                            }
+                        }
+                    }
+            )
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            TextInputAgeProfile(
+                text = age.value,
+                onValueChange = {
+                    age.value = it
+                },
+                interactionSource = remember {
+                    MutableInteractionSource()
+                }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    // click on textfield
+                                }
+                            }
+                        }
+                    }
+            )
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            DropDownLanguageProfile()
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            ButtonChangeProfile(
+                text = stringResource(id = R.string.text_save)
+            ) {
+                patchData(mContext)
+            }
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            ButtonExitProfile(
+                text = stringResource(id = R.string.text_exit)
+            ) {
+                tokenManager.saveToken("")
+                firstEntryManager.saveFirstEntry(false)
+                navigator.popBackStack()
+                navigator.navigate(EntryScreenDestination)
+            }
+
+            Spacer(modifier = Modifier.padding(top = 32.dp))
+
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_tickets),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.24.sp,
+                    textAlign = TextAlign.Left
+                )
+            )
+
+        }
     }
 }
 

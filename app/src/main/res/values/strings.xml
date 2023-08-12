@@ -53,4 +53,6 @@
     <string name="text_tourist">Турист</string>
     <string name="text_hint_start_test">Это поможет подобрать самые интересные события</string>
     <string name="text_to_app">В приложение</string>
+    <string name="text_entry_account">Войти в аккаунт</string>
+    <string name="text_profile_description">Что-бы создавать маршруты, сохранять в избранное и записываться на мероприятия войдите или зарегистрируйтесь</string>
 </resources>
