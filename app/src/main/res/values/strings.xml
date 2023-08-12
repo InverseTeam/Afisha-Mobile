@@ -46,4 +46,5 @@
     <string name="text_question_fifth">Будут ли с вами дети?</string>
     <string name="text_main_hint_test">Мы используем эти данные для составления оптимального маршрута</string>
     <string name="text_further">Далее</string>
+    <string name="text_exit">Выйти</string>
 </resources>

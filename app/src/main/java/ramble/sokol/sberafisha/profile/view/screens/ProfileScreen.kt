@@ -32,13 +32,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.JsonObject
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.destinations.EntryScreenDestination
+import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.profile.domain.models.ResponseUserInfo
 import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
+import ramble.sokol.sberafisha.profile.view.components.ButtonExitProfile
 import ramble.sokol.sberafisha.profile.view.components.DropDownLanguageProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputAgeProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputNameProfile
@@ -51,17 +55,22 @@ import retrofit2.Response
 private lateinit var apiProfile: APIProfile
 private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var tokenManager: TokenManager
+private lateinit var firstEntryManager: FirstEntryManager
 private lateinit var name: MutableState<String>
 private lateinit var surname: MutableState<String>
 private lateinit var age: MutableState<String>
 
 @Destination
 @Composable
-fun ProfileScreen(){
+fun ProfileScreen(
+    navigator: DestinationsNavigator
+){
 
     val mContext = LocalContext.current
 
     tokenManager = TokenManager(mContext)
+
+    firstEntryManager = FirstEntryManager(mContext)
 
     coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         throwable.printStackTrace()
@@ -180,6 +189,17 @@ fun ProfileScreen(){
             text = stringResource(id = R.string.text_save)
         ) {
             patchData(mContext)
+        }
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+        ButtonExitProfile(
+            text = stringResource(id = R.string.text_exit)
+        ) {
+            tokenManager.saveToken("")
+            firstEntryManager.saveFirstEntry(false)
+            navigator.popBackStack()
+            navigator.navigate(EntryScreenDestination)
         }
 
         Spacer(modifier = Modifier.padding(top = 32.dp))
