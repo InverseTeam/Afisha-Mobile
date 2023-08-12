@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -44,10 +45,14 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.destinations.BeforeTestScreenDestination
 import ramble.sokol.sberafisha.destinations.TestRouterScreenDestination
+import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.routes.view.components.ButtonSearchAfisha
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import ramble.sokol.sberafisha.ui.theme.White
+
+private lateinit var firstEntryManager: FirstEntryManager
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Destination
@@ -56,9 +61,15 @@ fun RouteScreen(
     navigator: DestinationsNavigator
 ){
 
-    val selected = remember { mutableStateOf(false) }
-    val scale = animateFloatAsState(if (selected.value) 0.85f else 1f, label = "")
+    val context = LocalContext.current
 
+    firstEntryManager = FirstEntryManager(context)
+
+    val selected1 = remember { mutableStateOf(false) }
+    val scale1 = animateFloatAsState(if (selected1.value) 0.85f else 1f, label = "")
+
+    val selected2 = remember { mutableStateOf(false) }
+    val scale2 = animateFloatAsState(if (selected2.value) 0.85f else 1f, label = "")
 
     Column(
         modifier = Modifier
@@ -88,42 +99,56 @@ fun RouteScreen(
             // click
         }
 
-        Spacer(modifier = Modifier.padding(top = 41.dp))
+        Spacer(modifier = Modifier.padding(top = 16.dp))
 
-        Box(
-            modifier = Modifier
-                .scale(scale.value)
-                .fillMaxWidth()
-                .pointerInteropFilter {
-                    when (it.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            selected.value = true }
+        Column(modifier = Modifier
+            .fillMaxWidth()) {
 
-                        MotionEvent.ACTION_UP  -> {
-                            selected.value = false
-                            Log.d("MyLog", "click")
-                            navigator.navigate(TestRouterScreenDestination)}
-                    }
-                    true
-                },
-            contentAlignment = Alignment.Center
-            ){
             Image(
-                painter = painterResource(id = R.drawable.round_button_route),
-                contentDescription = "big button route")
+                modifier = Modifier
+                    .scale(scale1.value)
+                    .fillMaxWidth()
+                    .pointerInteropFilter {
+                        when (it.action) {
+                            MotionEvent.ACTION_DOWN -> {
+                                selected1.value = true
+                            }
 
-            Text(
-                text = stringResource(id = R.string.text_create_route),
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.mont_semibold)),
-                    fontWeight = FontWeight(700),
-                    color = White,
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 0.24.sp,
-                ),
-                textAlign = TextAlign.Center
+                            MotionEvent.ACTION_UP -> {
+                                selected1.value = false
+                                Log.d("MyLog", "click")
+                                navigator.navigate(BeforeTestScreenDestination)
+                            }
+                        }
+                        true
+                    },
+                painter = painterResource(id = R.drawable.button_generate_route),
+                contentDescription = "generate button"
             )
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            Image(
+                modifier = Modifier
+                    .scale(scale2.value)
+                    .fillMaxWidth()
+                    .pointerInteropFilter {
+                        when (it.action) {
+                            MotionEvent.ACTION_DOWN -> {
+                                selected2.value = true
+                            }
+
+                            MotionEvent.ACTION_UP -> {
+                                selected2.value = false
+                                // click
+                            }
+                        }
+                        true
+                    },
+                painter = painterResource(id = R.drawable.button_build_route),
+                contentDescription = "generate button"
+            )
+
         }
 
         Spacer(modifier = Modifier.padding(top = 48.dp))

@@ -41,11 +41,10 @@
     <string name="text_tickets">Билеты</string>
     <string name="text_recommendations">Рекомендации</string>
     <string name="text_change_date">Изменить дату</string>
-    <string name="text_question_first">Какой вид отдыха вы предпочитаете?</string>
-    <string name="text_question_second">Что вам наиболее интересно?</string>
-    <string name="text_question_third">Какой бюджет у вашего отдыха?</string>
-    <string name="text_question_fourth">В какие даты вы планируете путишествие?</string>
-    <string name="text_question_fifth">Будут ли с вами дети?</string>
+    <string name="text_question_first">Что вам наиболее интересно?</string>
+    <string name="text_question_second">В какие даты вы планируете путишествие?</string>
+    <string name="text_question_third">Будут ли с вами дети?</string>
+    <string name="text_question_fourth">Какие предпочтения у ребенка?</string>
     <string name="text_main_hint_test">Мы используем эти данные для составления оптимального маршрута</string>
     <string name="text_further">Далее</string>
     <string name="text_exit">Выйти</string>
@@ -60,4 +59,9 @@
     <string name="text_ad_date">30 июля, ДИВС</string>
     <string name="text_about_events">О мероприятии</string>
     <string name="text_profile_description">Что-бы создавать маршруты, сохранять в избранное и записываться на мероприятия войдите или зарегистрируйтесь</string>
+    <string name="text_before_test_title">Вы хотите пройти опрос?</string>
+    <string name="text_before_test_hint">Он состоит из 3–4 вопросов, а его результаты помогут подобрать маршрут</string>
+    <string name="text_create_without_survey">Создать без опроса</string>
+    <string name="text_pass_survey">Пройти опрос</string>
+    <string name="text_route">Маршрут</string>
 </resources>
