@@ -40,6 +40,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.destinations.BeforeTestScreenDestination
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.destinations.MapAfterTestScreenDestination
 import ramble.sokol.sberafisha.destinations.RouteScreenDestination
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
 import ramble.sokol.sberafisha.routes.domain.models.DataForTest
@@ -218,13 +219,13 @@ fun TestRouterScreen(
                     }
                     else if (countQuestion == 2 && clickNumber == 5){
                         navigator.popBackStack()
-                        navigator.navigate(BottomMenuScreenDestination)
+                        navigator.navigate(MapAfterTestScreenDestination)
                     }else if (countQuestion == 2){
                         countQuestion++
                         clickNumber = 0
                     }else{
                         navigator.popBackStack()
-                        navigator.navigate(BottomMenuScreenDestination)
+                        navigator.navigate(MapAfterTestScreenDestination)
                     }
                 }
             }

@@ -64,4 +64,8 @@
     <string name="text_create_without_survey">Создать без опроса</string>
     <string name="text_pass_survey">Пройти опрос</string>
     <string name="text_route">Маршрут</string>
+    <string name="text_save_route">Сохранть маршрут</string>
+    <string name="text_to_main">На главную</string>
+    <string name="text_after_test_title">Тур успешно сохранен!</string>
+    <string name="text_after_test_hint">Маршрут скоро появится во вкладке “Профиль”</string>
 </resources>
