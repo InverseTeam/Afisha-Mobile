@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.destinations.BeforeTestScreenDestination
 import ramble.sokol.sberafisha.destinations.TestRouterScreenDestination
+import ramble.sokol.sberafisha.destinations.WarningAuthScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.routes.view.components.ButtonSearchAfisha
 import ramble.sokol.sberafisha.ui.theme.TextTitle
@@ -117,7 +118,14 @@ fun RouteScreen(
                             MotionEvent.ACTION_UP -> {
                                 selected1.value = false
                                 Log.d("MyLog", "click")
-                                navigator.navigate(BeforeTestScreenDestination)
+                                if (firstEntryManager.getFirstTest() == true){
+                                    navigator.popBackStack()
+                                    navigator.navigate(BeforeTestScreenDestination)
+                                }else{
+                                    navigator.popBackStack()
+                                    navigator.navigate(WarningAuthScreenDestination)
+                                }
+
                             }
                         }
                         true
@@ -140,7 +148,12 @@ fun RouteScreen(
 
                             MotionEvent.ACTION_UP -> {
                                 selected2.value = false
-                                // click
+                                if (firstEntryManager.getFirstTest() == true){
+                                    // yep
+                                }else{
+                                    navigator.popBackStack()
+                                    navigator.navigate(WarningAuthScreenDestination)
+                                }
                             }
                         }
                         true

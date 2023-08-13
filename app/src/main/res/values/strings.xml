@@ -64,8 +64,12 @@
     <string name="text_create_without_survey">Создать без опроса</string>
     <string name="text_pass_survey">Пройти опрос</string>
     <string name="text_route">Маршрут</string>
+    <string name="text_warning">Предупреждение</string>
     <string name="text_save_route">Сохранть маршрут</string>
     <string name="text_to_main">На главную</string>
     <string name="text_after_test_title">Тур успешно сохранен!</string>
     <string name="text_after_test_hint">Маршрут скоро появится во вкладке “Профиль”</string>
+    <string name="text_warning_title">Войдите или зарегистрируйтесь</string>
+    <string name="text_warning_hint">Без этого мы не сможем выполнять некоторые функции коректно</string>
+    <string name="text_button_warning">Войти или зарегистрироваться</string>
 </resources>
