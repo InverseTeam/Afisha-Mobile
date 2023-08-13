@@ -271,20 +271,6 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.padding(top = 32.dp))
-
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.text_tickets),
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontFamily = FontFamily(Font(R.font.mont_bold)),
-                    fontWeight = FontWeight(800),
-                    color = TextTitle,
-                    letterSpacing = 0.24.sp,
-                    textAlign = TextAlign.Left
-                )
-            )
-
         }
     }
 }
