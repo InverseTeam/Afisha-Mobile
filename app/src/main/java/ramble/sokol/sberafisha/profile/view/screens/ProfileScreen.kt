@@ -1,5 +1,6 @@
 package ramble.sokol.sberafisha.profile.view.screens
 
+import DropDownLanguageProfile
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -56,7 +57,6 @@ import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonExitProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonForEntryProfile
-import ramble.sokol.sberafisha.profile.view.components.DropDownLanguageProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputAgeProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputNameProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputSurnameProfile
@@ -250,6 +250,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
             // drop down
+            DropDownLanguageProfile()
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
@@ -271,6 +272,7 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.padding(top = 32.dp))
+
         }
     }
 }
