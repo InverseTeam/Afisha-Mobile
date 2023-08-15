@@ -1,4 +1,4 @@
-package ramble.sokol.sberafisha.afisha.domain.models
+package ramble.sokol.sberafisha.afisha.model.data
 
 import com.google.gson.annotations.SerializedName
 
