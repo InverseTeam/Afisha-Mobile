@@ -87,7 +87,7 @@ fun ProfileScreen(
 
     firstEntryManager = FirstEntryManager(mContext)
 
-    val checkRegistration = firstEntryManager.getFirstEntry()
+    val checkRegistration = firstEntryManager.getFirstTest()
 
     if (checkRegistration == false) {
 

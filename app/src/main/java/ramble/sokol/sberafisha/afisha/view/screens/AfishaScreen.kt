@@ -64,7 +64,7 @@ fun AfishaScreen(){
 
     firstEntryManager = FirstEntryManager(context)
 
-    val checkRegistration = firstEntryManager.getFirstEntry()
+    val checkRegistration = firstEntryManager.getFirstTest()
 
     if (checkRegistration == false){
         val allEventsViewModel  = hiltViewModel<AllEventsViewModel>()

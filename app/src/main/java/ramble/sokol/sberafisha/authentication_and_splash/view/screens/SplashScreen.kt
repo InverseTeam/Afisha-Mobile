@@ -38,8 +38,6 @@ import ramble.sokol.sberafisha.start_test.view.screeens.StartTestScreen
 import ramble.sokol.sberafisha.ui.theme.SberAfishaTheme
 import ramble.sokol.sberafisha.ui.theme.White
 
-private lateinit var firstEntryManager: FirstEntryManager
-
 @Destination(start = true)
 @Composable
 fun SplashScreen(
@@ -47,8 +45,6 @@ fun SplashScreen(
 ) {
 
     val mContext = LocalContext.current
-
-    firstEntryManager = FirstEntryManager(mContext)
 
 
         val transition = rememberInfiniteTransition(label = "")

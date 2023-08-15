@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
@@ -39,20 +40,16 @@ fun CardEvents(
         horizontalAlignment = Alignment.CenterHorizontally){
 
     }
+    Image(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        painter = rememberAsyncImagePainter("https://inverse-tracker.store/${event.cover}"),
+        contentDescription = "image events",
+        contentScale = ContentScale.Crop
+    )
 
-    Column (modifier = Modifier
-        .fillMaxWidth()
-        .height(150.dp)
-        .background(
-            color = Color.Transparent,
-            shape = RoundedCornerShape(size = 16.dp)
-        )){
-        Image(
-            painter = rememberAsyncImagePainter("https://inverse-tracker.store/${event.cover}"),
-            contentDescription = "image events",
-            contentScale = ContentScale.Crop
-        )
-    }
     
     Spacer(modifier = Modifier.padding(top = 12.dp))
 
