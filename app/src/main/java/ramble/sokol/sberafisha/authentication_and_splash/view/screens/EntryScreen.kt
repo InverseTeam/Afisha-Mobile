@@ -318,7 +318,7 @@ fun EntryScreen(
 private fun entry(context: Context, navigator: DestinationsNavigator, email: String, password: String){
 
     val body = JsonObject().apply {
-        addProperty("username", email)
+        addProperty("email", email)
         addProperty("password", password)
     }
     val call = apiAuth.entryAndGetToken(body)

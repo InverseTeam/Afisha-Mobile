@@ -267,6 +267,7 @@ fun ProfileScreen(
             ) {
                 tokenManager.saveToken("")
                 firstEntryManager.saveFirstEntry(false)
+                firstEntryManager.saveFirstTest(false)
                 navigator.popBackStack()
                 navigator.navigate(BottomMenuScreenDestination)
             }
