@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -16,28 +17,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.ui.theme.ColorBackgroundTextField
+import ramble.sokol.sberafisha.ui.theme.ColorTextField
+import ramble.sokol.sberafisha.ui.theme.ColorTextHint
 
 @Preview
 @Composable
 fun DropDownLanguageProfile() {
-    // Список элементов выпадающего списка
-    val items = listOf("Item 1", "Item 2", "Item 3")
 
-    // Состояние для выбора элемента
+    val items = listOf("Русский", "Английский", "Армянский")
+
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(items[0]) }
 
-    // Состояние для анимации
-    val textColor by animateColorAsState(
-        if (expanded) Color.White else Color.Black,
-        TweenSpec(300)
-    )
-    val backgroundColor by animateColorAsState(
-        if (expanded) Color.Blue else Color.LightGray,
-        TweenSpec(300)
-    )
+//    // Состояние для анимации
+//    val textColor: Color by animateColorAsState(
+//        if (expanded) Color.White else Color.Black,
+//        TweenSpec(300), label = ""
+//    )
+//    val backgroundColor by animateColorAsState(
+//        if (expanded) Color.Blue else Color.LightGray,
+//        TweenSpec(300), label = ""
+//    )
 
     Column(
         modifier = Modifier
@@ -46,39 +55,55 @@ fun DropDownLanguageProfile() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = backgroundColor)
+                .background(color = ColorBackgroundTextField, shape = RoundedCornerShape(15.dp))
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .clickable { expanded = !expanded },
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = selectedOption,
-                color = textColor,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                modifier = Modifier.weight(1f)
-            )
 
-            if (expanded) {
+            Column (
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(bottom = 5.dp),
+                verticalArrangement = Arrangement.Top
+            ){
+
                 Text(
-                    text = "▲",
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(start = 8.dp)
+                    stringResource(id = R.string.text_language),
+                    style = TextStyle(
+                        color = ColorTextHint,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight(700)
+                    )
                 )
-            } else {
-                Text(
-                    text = "▼",
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(start = 8.dp)
+                Text (
+                    text = selectedOption,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(700),
+                        color = ColorTextField,
+                    )
                 )
             }
+
+            Icon(painter = painterResource(id = R.drawable.ic_arrowdown), contentDescription = "image arrow down")
         }
 
         if (expanded) {
             items.forEach { item ->
                 Text(
                     text = item,
-                    color = Color.Black,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(700),
+                        color = ColorTextField,
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
@@ -86,7 +111,6 @@ fun DropDownLanguageProfile() {
                             expanded = false
                         }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .background(color = Color.LightGray)
                         .wrapContentHeight()
                 )
             }
