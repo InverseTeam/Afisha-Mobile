@@ -1,5 +1,6 @@
 package ramble.sokol.sberafisha.start_test.view.screeens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -106,7 +107,7 @@ fun AdScreen(
             .fillMaxWidth()
             .padding(horizontal = 32.dp)) {
             ButtonForEntryProfile(text = stringResource(id = R.string.text_about_events)) {
-
+                Toast.makeText(mContext, R.string.text_into_developing, Toast.LENGTH_SHORT).show()
             }
 
             Spacer(modifier = Modifier.padding(top = 8.dp))

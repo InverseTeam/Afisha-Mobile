@@ -248,7 +248,7 @@ fun EntryScreen(
 
             Text(
                 modifier = Modifier.clickable {
-                    // click
+                    Toast.makeText(mContext, R.string.text_into_developing, Toast.LENGTH_SHORT).show()
                 },
                 text = stringResource(id = R.string.text_recover),
                 style = TextStyle(
@@ -266,7 +266,7 @@ fun EntryScreen(
         Spacer(modifier = Modifier.padding(top = 6.dp))
         
         ButtonForEntrySber(text = stringResource(id = R.string.text_button_entry_sberid)) {
-            // click
+            Toast.makeText(mContext, R.string.text_into_developing, Toast.LENGTH_SHORT).show()
         }
 
         Spacer(modifier = Modifier.padding(top = 123.dp))
@@ -299,7 +299,7 @@ fun EntryScreen(
 
             Text(
                 modifier = Modifier.clickable {
-                    // click
+                    Toast.makeText(mContext, R.string.text_into_developing, Toast.LENGTH_SHORT).show()
                 },
                 text = stringResource(id = R.string.text_end_agreement),
                 style = TextStyle(

@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,6 +74,7 @@ private lateinit var incorrectData: MutableState<Boolean>
 private lateinit var firstEntryManager: FirstEntryManager
 private lateinit var roleManager: RoleManager
 private lateinit var progressEntryState: MutableState<Boolean>
+private lateinit var roleMain: MutableState<Int>
 
 @Destination
 @Composable
@@ -100,6 +102,10 @@ fun RegistrationScreen(
 
     progressEntryState = remember {
         mutableStateOf(false)
+    }
+
+    roleMain = remember {
+        mutableIntStateOf(0)
     }
 
     var emailError by remember {
@@ -461,7 +467,7 @@ fun RegistrationScreen(
                 ) {
                     progressEntryState.value = true
                     Log.d("MyLog", "Click")
-                    registration(mContext, navigator, email, password)
+                    registration(mContext, navigator, email, password, name, surname, age)
                 }
 
             }
@@ -497,7 +503,7 @@ fun RegistrationScreen(
 
             Text(
                 modifier = Modifier.clickable {
-                    // click
+                    Toast.makeText(mContext, R.string.text_into_developing, Toast.LENGTH_SHORT).show()
                 },
                 text = stringResource(id = R.string.text_end_agreement),
                 style = TextStyle(
@@ -518,16 +524,47 @@ private fun isValidEmail(email: String): Boolean {
     return email.matches(emailRegex)
 }
 
+//private fun getRoles(context: Context){
+//    val call = apiAuth.getAllRoles()
+//    call.enqueue(object : Callback<List<ResponseAuth>> {
+//        override fun onResponse(call: Call<List<ResponseAuth>>, response: Response<List<ResponseAuth>>) {
+//            if (response.isSuccessful) {
+//                val responseBody = response.body()
+//                if (responseBody != null) {
+//                    for (role in responseBody){
+//                        if (role.name == "Пользователь"){
+//                            roleMain.value = role.id + 1
+//                            Log.d("MyLog", roleMain.value.toString())
+//                        }
+//                    }
+//
+//                }
+//            } else {
+//                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+//                Log.d("MyLog", response.message())
+//            }
+//        }
+//
+//        override fun onFailure(call: Call<List<ResponseAuth>>, t: Throwable) {
+//            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+//            progressEntryState.value = false
+//        }
+//    })
+//}
+
 fun registration(
     context: Context, navigator: DestinationsNavigator, email: String, password: String,
     name: String, surname: String, age: String
 ){
+    //getRoles(context)
+    //Log.d("MyLog", roleMain.toString())
     val body = JsonObject().apply {
         addProperty("email", email)
         addProperty("password", password)
         addProperty("firstname", name)
         addProperty("lastname", surname)
         addProperty("age", age)
+        addProperty("role", 1)
     }
     val call = apiAuth.createAccount(body)
 
