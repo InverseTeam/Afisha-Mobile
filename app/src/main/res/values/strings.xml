@@ -72,4 +72,6 @@
     <string name="text_warning_title">Войдите или зарегистрируйтесь</string>
     <string name="text_warning_hint">Без этого мы не сможем выполнять некоторые функции коректно</string>
     <string name="text_button_warning">Войти или зарегистрироваться</string>
+    <string name="text_into_developing">В разработке</string>
+    <string name="text_incorrect_age">Введите корректный возраст</string>
 </resources>

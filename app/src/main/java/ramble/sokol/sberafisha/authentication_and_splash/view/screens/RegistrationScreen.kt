@@ -47,8 +47,11 @@ import ramble.sokol.sberafisha.authentication_and_splash.domain.utils.APIAuth
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ProgressBarAuth
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputAgeEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputEmailEntry
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputNameEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
+import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputSurnameEntry
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.destinations.StartTestScreenDestination
@@ -103,7 +106,23 @@ fun RegistrationScreen(
         mutableStateOf(false)
     }
 
-    var emailIncorrect = remember {
+    val emailIncorrect = remember {
+        mutableStateOf(false)
+    }
+
+    val nameError = remember {
+        mutableStateOf(false)
+    }
+
+    val surnameError = remember {
+        mutableStateOf(false)
+    }
+
+    val ageError = remember {
+        mutableStateOf(false)
+    }
+
+    var ageErrorIncorrect by remember {
         mutableStateOf(false)
     }
 
@@ -120,6 +139,18 @@ fun RegistrationScreen(
     }
 
     var password by remember {
+        mutableStateOf("")
+    }
+
+    var name by remember {
+        mutableStateOf("")
+    }
+
+    var surname by remember {
+        mutableStateOf("")
+    }
+
+    var age by remember {
         mutableStateOf("")
     }
 
@@ -145,7 +176,12 @@ fun RegistrationScreen(
                 emailError = false
                 passwordError = false
                 passwordLength = false
+                nameError.value = false
+                surnameError.value = false
+                ageError.value = false
                 incorrectData.value = false
+                ageErrorIncorrect = false
+                emailIncorrect.value = false
                 email = it
             },
             borderWidth = if (emailError) 1 else 0,
@@ -158,7 +194,12 @@ fun RegistrationScreen(
                                 emailError = false
                                 passwordError = false
                                 passwordLength = false
+                                nameError.value = false
+                                surnameError.value = false
+                                ageError.value = false
+                                ageErrorIncorrect = false
                                 incorrectData.value = false
+                                emailIncorrect.value = false
                             }
                         }
                     }
@@ -212,6 +253,12 @@ fun RegistrationScreen(
                 passwordError = false
                 passwordLength = false
                 incorrectData.value = false
+                nameError.value = false
+                surnameError.value = false
+                ageError.value = false
+                ageErrorIncorrect = false
+                ageErrorIncorrect = false
+                emailIncorrect.value = false
                 password = it
             },
             borderWidth = if (passwordError) 1 else 0,
@@ -224,7 +271,12 @@ fun RegistrationScreen(
                                 emailError = false
                                 passwordError = false
                                 passwordLength = false
+                                nameError.value = false
+                                surnameError.value = false
+                                ageError.value = false
                                 incorrectData.value = false
+                                ageErrorIncorrect = false
+                                emailIncorrect.value = false
                             }
                         }
                     }
@@ -253,6 +305,139 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
+        TextInputNameEntry(
+            text = name,
+            onValueChange = {
+                emailError = false
+                passwordError = false
+                passwordLength = false
+                incorrectData.value = false
+                nameError.value = false
+                surnameError.value = false
+                ageError.value = false
+                ageErrorIncorrect = false
+                emailIncorrect.value = false
+                name = it
+            },
+            borderWidth = if (nameError.value) 1 else 0,
+            color = if (nameError.value) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                passwordLength = false
+                                incorrectData.value = false
+                                nameError.value = false
+                                surnameError.value = false
+                                ageError.value = false
+                                ageErrorIncorrect = false
+                                emailIncorrect.value = false
+                            }
+                        }
+                    }
+                }
+        )
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+        TextInputSurnameEntry(
+            text = surname,
+            onValueChange = {
+                emailError = false
+                passwordError = false
+                passwordLength = false
+                incorrectData.value = false
+                nameError.value = false
+                surnameError.value = false
+                ageError.value = false
+                ageErrorIncorrect = false
+                emailIncorrect.value = false
+                surname = it
+            },
+            borderWidth = if (surnameError.value) 1 else 0,
+            color = if (surnameError.value) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                passwordLength = false
+                                nameError.value = false
+                                surnameError.value = false
+                                ageError.value = false
+                                incorrectData.value = false
+                                ageErrorIncorrect = false
+                                emailIncorrect.value = false
+                            }
+                        }
+                    }
+                }
+        )
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+        TextInputAgeEntry(
+            text = age,
+            onValueChange = {
+                emailError = false
+                passwordError = false
+                passwordLength = false
+                incorrectData.value = false
+                nameError.value = false
+                surnameError.value = false
+                ageError.value = false
+                ageErrorIncorrect = false
+                emailIncorrect.value = false
+                age = it
+            },
+            borderWidth = if (ageError.value) 1 else 0,
+            color = if (ageError.value) Error else Color.Transparent,
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                emailError = false
+                                passwordError = false
+                                passwordLength = false
+                                nameError.value = false
+                                surnameError.value = false
+                                ageError.value = false
+                                ageErrorIncorrect = false
+                                incorrectData.value = false
+                                emailIncorrect.value = false
+                            }
+                        }
+                    }
+                }
+        )
+
+        if (ageErrorIncorrect){
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 8.dp)){
+
+                Text(
+                    text = stringResource(id = R.string.text_incorrect_age),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        lineHeight = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                        fontWeight = FontWeight(400),
+                        color = Error,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
         if (progressEntryState.value){
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -261,14 +446,18 @@ fun RegistrationScreen(
                 ProgressBarAuth()
             }
         }else {
-
             ButtonForEntry(text = stringResource(id = R.string.text_register)) {
                 if (password.isEmpty()) passwordError = true
                 if (email.isEmpty()) emailError = true
-                if (!isValidEmail(email)) emailIncorrect.value = true
-                if (password.length < 8 && !password.isEmpty()) passwordLength = true
-                if (!email.isEmpty() && !password.isEmpty() && password.length >= 8
-                    && isValidEmail(email)
+                if (name.isEmpty()) nameError.value = true
+                if (surname.isEmpty()) surnameError.value = true
+                if (age.isEmpty()) ageError.value = true
+                if (!age.isEmpty() && (age.toInt() > 100 || age.toInt() < 10)) ageErrorIncorrect = true
+                if (!isValidEmail(email) && !email.isEmpty()) emailIncorrect.value = true
+                if (password.length < 8 && password.isNotEmpty()) passwordLength = true
+                if (email.isNotEmpty() && password.isNotEmpty() && password.length >= 8
+                    && isValidEmail(email) && name.isNotEmpty() && surname.isNotEmpty()
+                    && age.isNotEmpty() && (age.toInt() in 10..100)
                 ) {
                     progressEntryState.value = true
                     Log.d("MyLog", "Click")
@@ -329,10 +518,16 @@ private fun isValidEmail(email: String): Boolean {
     return email.matches(emailRegex)
 }
 
-fun registration(context: Context, navigator: DestinationsNavigator, email: String, password: String){
+fun registration(
+    context: Context, navigator: DestinationsNavigator, email: String, password: String,
+    name: String, surname: String, age: String
+){
     val body = JsonObject().apply {
         addProperty("email", email)
         addProperty("password", password)
+        addProperty("firstname", name)
+        addProperty("lastname", surname)
+        addProperty("age", age)
     }
     val call = apiAuth.createAccount(body)
 

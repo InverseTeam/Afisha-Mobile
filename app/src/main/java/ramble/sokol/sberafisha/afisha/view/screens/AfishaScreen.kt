@@ -39,6 +39,7 @@ import ramble.sokol.sberafisha.afisha.model.data.AllEventsItem
 import ramble.sokol.sberafisha.afisha.model.data.ResponseEvents
 import ramble.sokol.sberafisha.afisha.model.service.APIAfisha
 import ramble.sokol.sberafisha.afisha.view.components.CardEvents
+import ramble.sokol.sberafisha.afisha.view.components.ProgressBarAfisha
 import ramble.sokol.sberafisha.afisha.view_model.AllEventsViewModel
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ProgressBarAuth
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
@@ -92,12 +93,12 @@ fun AfishaScreen(){
 
             Spacer(modifier = Modifier.padding(top = 20.dp))
 
-            Log.d("MyLog", allEvents.toString())
+            //Log.d("MyLog", allEvents.toString())
 
             LazyColumn(modifier = Modifier.fillMaxWidth()){
                 if (allEvents.isEmpty()){
                     item {
-                        ProgressBarAuth()
+                        ProgressBarAfisha()
                     }
                 }
                 else if (allEvents[0].id.toInt() == -1){

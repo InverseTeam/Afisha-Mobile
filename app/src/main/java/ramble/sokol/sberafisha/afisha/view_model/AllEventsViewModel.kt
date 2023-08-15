@@ -36,7 +36,7 @@ class AllEventsViewModel @Inject constructor(
             try {
                 val allEvents = getAllEventsUseCase()
                 _allEvents.value = allEvents
-                Log.d("MyLog", allEvents.toString())
+                //Log.d("MyLog", allEvents.toString())
             } catch (_: Exception){
                 _allEvents.value = listOf(AllEventsItem(-1, "error", "error", ModelPlatform("error"), "error"))
             }
