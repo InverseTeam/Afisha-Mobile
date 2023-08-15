@@ -40,17 +40,19 @@ fun CardEvents(
 
     }
 
-    Image(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .background(
-                color = Color.Transparent,
-                shape = RoundedCornerShape(size = 16.dp)
-            ),
-        painter = rememberAsyncImagePainter("https://inverse-tracker.store/${event.cover}"),
-        contentDescription = "image events",
-        contentScale = ContentScale.Crop)
+    Column (modifier = Modifier
+        .fillMaxWidth()
+        .height(150.dp)
+        .background(
+            color = Color.Transparent,
+            shape = RoundedCornerShape(size = 16.dp)
+        )){
+        Image(
+            painter = rememberAsyncImagePainter("https://inverse-tracker.store/${event.cover}"),
+            contentDescription = "image events",
+            contentScale = ContentScale.Crop
+        )
+    }
     
     Spacer(modifier = Modifier.padding(top = 12.dp))
 

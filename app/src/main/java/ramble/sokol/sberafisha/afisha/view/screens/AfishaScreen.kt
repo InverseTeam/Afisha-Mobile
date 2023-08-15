@@ -52,7 +52,6 @@ import retrofit2.Response
 private lateinit var firstEntryManager: FirstEntryManager
 private lateinit var listEvents: ArrayList<ResponseEvents>
 private lateinit var apiAfisha: APIAfisha
-private lateinit var coroutineExceptionHandler: CoroutineExceptionHandler
 private lateinit var check: MutableState<Boolean>
 
 
@@ -63,103 +62,78 @@ fun AfishaScreen(){
 
     val context = LocalContext.current
 
-    val allEventsViewModel  = hiltViewModel<AllEventsViewModel>()
-    val allEvents by allEventsViewModel.allEvents.collectAsState()
-
     firstEntryManager = FirstEntryManager(context)
 
-    listEvents = ArrayList()
+    val checkRegistration = firstEntryManager.getFirstEntry()
 
-    coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
-    }
+    if (checkRegistration == false){
+        val allEventsViewModel  = hiltViewModel<AllEventsViewModel>()
+        val allEvents by allEventsViewModel.allEvents.collectAsState()
 
-    apiAfisha = RetrofitHelper.getInstance().create(APIAfisha::class.java)
-
-    check = remember {
-        mutableStateOf(false)
-    }
-
-    // val coroutineScope = rememberCoroutineScope()
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, start = 32.dp, end = 32.dp, bottom = 60.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.text_poster),
-            style = TextStyle(
-                fontSize = 24.sp,
-                fontFamily = FontFamily(Font(R.font.mont_bold)),
-                fontWeight = FontWeight(800),
-                color = TextTitle,
-                letterSpacing = 0.24.sp,
-                textAlign = TextAlign.Left
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, start = 32.dp, end = 32.dp, bottom = 60.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_poster),
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.24.sp,
+                    textAlign = TextAlign.Left
+                )
             )
-        )
 
-        Spacer(modifier = Modifier.padding(top = 20.dp))
+            Spacer(modifier = Modifier.padding(top = 20.dp))
 
-        Log.d("MyLog", allEvents.toString())
+            Log.d("MyLog", allEvents.toString())
 
-        LazyColumn(modifier = Modifier.fillMaxWidth()){
-            if (allEvents.isEmpty()){
-                item {
-                    ProgressBarAuth()
+            LazyColumn(modifier = Modifier.fillMaxWidth()){
+                if (allEvents.isEmpty()){
+                    item {
+                        ProgressBarAuth()
+                    }
+                }
+                else if (allEvents[0].id.toInt() == -1){
+                    Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+                }else{
+                    items(allEvents){ allEvents: AllEventsItem ->
+                        CardEvents(event = allEvents)
+                    }
+
                 }
             }
-            else if (allEvents[0].id.toInt() == -1){
-                Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
-            }else{
-                items(allEvents){ allEvents: AllEventsItem ->
-                    CardEvents(event = allEvents)
-            }
+        }
+    }else{
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, start = 32.dp, end = 32.dp, bottom = 60.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_poster),
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.24.sp,
+                    textAlign = TextAlign.Left
+                )
+            )
 
-            }
+
+
         }
     }
 
-//    val c = Calendar.getInstance()
-//    val year = c.get(Calendar.YEAR)
-//    val month = c.get(Calendar.MONTH)
-//    val day = c.get(Calendar.DAY_OF_MONTH)
-//    val context = LocalContext.current
-//
-//    var date by remember {
-//        mutableStateOf("")
-//    }
-//
-//    val datePickerDialog = DatePickerDialog(
-//        context, { d, year1, month1, day1 ->
-//            val month = month + 1
-//            date = "$day1 - $month - $year1"
-//        }, year, month, day //    )
-
 }
-
-//private fun getData(context: Context){
-//    val call = apiAfisha.getAllEvents()
-//
-//    call.enqueue(object : Callback<ArrayList<ResponseEvents>> {
-//        override fun onResponse(call: Call<ArrayList<ResponseEvents>>, response: Response<ArrayList<ResponseEvents>>) {
-//            if (response.isSuccessful) {
-//                val responseBody = response.body()
-//                listEvents = responseBody!!
-//                Log.d("MyLog", "finish")
-//                check.value = true
-//            } else {
-//                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-//        override fun onFailure(call: Call<ArrayList<ResponseEvents>>, t: Throwable) {
-//            Log.d("MyLog", t.message!!)
-//            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
-//        }
-//    })
-//}
-
