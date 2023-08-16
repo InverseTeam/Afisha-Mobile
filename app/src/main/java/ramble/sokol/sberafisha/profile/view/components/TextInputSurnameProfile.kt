@@ -43,7 +43,8 @@ fun TextInputSurnameProfile(
     onValueChange: (String) -> Unit,
     borderWidth: Int = 1,
     color: Color = Color.Transparent,
-    interactionSource: MutableInteractionSource
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean
 ){
     TextField(
         modifier = Modifier
@@ -79,5 +80,6 @@ fun TextInputSurnameProfile(
             containerColor = ColorBackgroundTextField
         ),
         singleLine = true,
+        enabled = enabled
     )
 }

@@ -202,7 +202,8 @@ fun ProfileScreen(
                                 }
                             }
                         }
-                    }
+                    },
+                enabled = false
             )
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -223,7 +224,8 @@ fun ProfileScreen(
                                 }
                             }
                         }
-                    }
+                    },
+                enabled = false
             )
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
@@ -244,21 +246,14 @@ fun ProfileScreen(
                                 }
                             }
                         }
-                    }
+                    },
+                enabled = false
             )
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
             // drop down
             DropDownLanguageProfile()
-
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-
-            ButtonChangeProfile(
-                text = stringResource(id = R.string.text_save)
-            ) {
-                patchData(mContext)
-            }
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
 
@@ -303,28 +298,28 @@ private fun getData(context: Context){
 
 }
 
-private fun patchData(context: Context){
-
-    val body = JsonObject().apply {
-        addProperty("firstname", name.value)
-        addProperty("lastname", surname.value)
-        addProperty("age", age.value)
-    }
-
-    val call = apiProfile.patchMyAccount("Token ${tokenManager.getToken()}", body)
-
-    call.enqueue(object : Callback<ResponseUserInfo> {
-        override fun onResponse(call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>) {
-            if (response.isSuccessful) {
-                Toast.makeText(context, R.string.text_data_upgrade, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
-            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
-        }
-    })
-
-}
+//private fun patchData(context: Context){
+//
+//    val body = JsonObject().apply {
+//        addProperty("firstname", name.value)
+//        addProperty("lastname", surname.value)
+//        addProperty("age", age.value)
+//    }
+//
+//    val call = apiProfile.patchMyAccount("Token ${tokenManager.getToken()}", body)
+//
+//    call.enqueue(object : Callback<ResponseUserInfo> {
+//        override fun onResponse(call: Call<ResponseUserInfo>, response: Response<ResponseUserInfo>) {
+//            if (response.isSuccessful) {
+//                Toast.makeText(context, R.string.text_data_upgrade, Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//
+//        override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
+//            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+//        }
+//    })
+//
+//}

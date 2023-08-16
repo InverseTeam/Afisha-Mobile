@@ -46,7 +46,8 @@ fun TextInputAgeProfile(
     onValueChange: (String) -> Unit,
     borderWidth: Int = 1,
     color: Color = Color.Transparent,
-    interactionSource: MutableInteractionSource
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean
 ){
     TextField(
         modifier = Modifier
@@ -82,6 +83,7 @@ fun TextInputAgeProfile(
             containerColor = ColorBackgroundTextField
         ),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+        enabled = enabled
     )
 }

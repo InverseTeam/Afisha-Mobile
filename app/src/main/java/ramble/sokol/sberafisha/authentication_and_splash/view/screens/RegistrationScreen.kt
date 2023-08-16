@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,7 +55,6 @@ import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInp
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputNameEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputPasswordEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.TextInputSurnameEntry
-import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.destinations.StartTestScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
@@ -159,6 +160,15 @@ fun RegistrationScreen(
     var age by remember {
         mutableStateOf("")
     }
+
+    var passwordVis by remember {
+        mutableStateOf(false)
+    }
+
+    val icon = if (passwordVis) 
+        painterResource(id = R.drawable.password_true)
+    else 
+        painterResource(id = R.drawable.password_false)
 
     Column (
         modifier = Modifier
