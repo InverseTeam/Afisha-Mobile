@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.ui.theme.BackColumn
 import ramble.sokol.sberafisha.ui.theme.ColorBackgroundTextField
 import ramble.sokol.sberafisha.ui.theme.ColorTextField
 import ramble.sokol.sberafisha.ui.theme.ColorTextHint
@@ -92,28 +93,41 @@ fun DropDownLanguageProfile() {
 
             Icon(painter = painterResource(id = R.drawable.ic_arrowdown), contentDescription = "image arrow down")
         }
+        
+        Spacer(modifier = Modifier.padding(top = 6.dp))
 
         if (expanded) {
-            items.forEach { item ->
-                Text(
-                    text = item,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_semibold)),
-                        fontWeight = FontWeight(700),
-                        color = ColorTextField,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            selectedOption = item
-                            expanded = false
-                        }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .wrapContentHeight()
-                )
+
+            Column (modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = ColorBackgroundTextField,
+                    shape = RoundedCornerShape(size = 15.dp)
+                )){
+
+                items.forEach { item ->
+                    Text(
+                        text = item,
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                            fontWeight = FontWeight(700),
+                            color = ColorTextField,
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedOption = item
+                                expanded = false
+                            }
+                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                    )
+                }
+
             }
+
+
         }
     }
 }

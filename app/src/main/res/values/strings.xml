@@ -74,4 +74,11 @@
     <string name="text_button_warning">Войти или зарегистрироваться</string>
     <string name="text_into_developing">В разработке</string>
     <string name="text_incorrect_age">Введите корректный возраст</string>
+    <string name="text_event">Мероприятие</string>
+    <string name="text_concerts">Концерты</string>
+    <string name="text_exposition">Выставки</string>
+    <string name="text_lectures">Лекции</string>
+    <string name="text_cinema">Кино</string>
+    <string name="text_theater">Театр</string>
+    <string name="text_sport">Спорт</string>
 </resources>

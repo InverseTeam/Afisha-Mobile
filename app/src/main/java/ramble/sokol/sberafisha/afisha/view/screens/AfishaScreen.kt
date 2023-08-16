@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -19,9 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -38,12 +44,14 @@ import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.afisha.model.data.AllEventsItem
 import ramble.sokol.sberafisha.afisha.model.data.ResponseEvents
 import ramble.sokol.sberafisha.afisha.model.service.APIAfisha
+import ramble.sokol.sberafisha.afisha.view.components.ButtonDateAfisha
 import ramble.sokol.sberafisha.afisha.view.components.CardEvents
 import ramble.sokol.sberafisha.afisha.view.components.ProgressBarAfisha
 import ramble.sokol.sberafisha.afisha.view_model.AllEventsViewModel
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ProgressBarAuth
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
+import ramble.sokol.sberafisha.ui.theme.ColorTextField
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import retrofit2.Call
 import retrofit2.Callback
@@ -112,27 +120,189 @@ fun AfishaScreen(){
             }
         }
     }else{
+
+        var currentDate by remember {
+            mutableStateOf("Дата")
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, start = 32.dp, end = 32.dp, bottom = 60.dp),
+                .padding(top = 16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.text_poster),
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.mont_bold)),
-                    fontWeight = FontWeight(800),
-                    color = TextTitle,
-                    letterSpacing = 0.24.sp,
-                    textAlign = TextAlign.Left
+
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 32.dp)
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.text_poster),
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = TextTitle,
+                        letterSpacing = 0.24.sp,
+                        textAlign = TextAlign.Left
+                    )
                 )
-            )
 
+                Spacer(modifier = Modifier.padding(top = 16.dp))
 
+                ButtonDateAfisha(text = currentDate) {
+
+                }
+
+                Spacer(modifier = Modifier.padding(top = 24.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ){
+
+                    Column(modifier = Modifier.padding(end = 25.dp)) {
+                        Image(
+                            modifier = Modifier
+                                .width(83.45267.dp)
+                                .height(62.63379.dp),
+                            painter = painterResource(id = R.drawable.icon_text_recommendation),
+                            contentDescription = "icon recommend"
+                        )
+                    }
+
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(id = R.string.text_recommendations),
+                        style = TextStyle(
+                            fontSize = 32.sp,
+                            lineHeight = 35.2.sp,
+                            fontFamily = FontFamily(Font(R.font.mont_bold)),
+                            fontWeight = FontWeight(800),
+                            color = ColorTextField,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                }
+            }
+
+            // lasyrow
+            
+            Spacer(modifier = Modifier.padding(top = 24.dp))
+            
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 32.dp)
+            ){
+
+                Text(
+                    text = stringResource(id = R.string.text_concerts),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = TextTitle,
+                        letterSpacing = 0.18.sp,
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(top = 15.dp))
+
+                // lazyrow
+                
+                Spacer(modifier = Modifier.padding(top = 32.dp))
+
+                Text(
+                    text = stringResource(id = R.string.text_exposition),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = TextTitle,
+                        letterSpacing = 0.18.sp,
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(top = 15.dp))
+
+                // lazyrow
+
+                Spacer(modifier = Modifier.padding(top = 32.dp))
+
+                Text(
+                    text = stringResource(id = R.string.text_lectures),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = TextTitle,
+                        letterSpacing = 0.18.sp,
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(top = 15.dp))
+
+                // lazyrow
+
+                Spacer(modifier = Modifier.padding(top = 32.dp))
+
+                Text(
+                    text = stringResource(id = R.string.text_cinema),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = TextTitle,
+                        letterSpacing = 0.18.sp,
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(top = 15.dp))
+
+                // lazyrow
+
+                Spacer(modifier = Modifier.padding(top = 32.dp))
+
+                Text(
+                    text = stringResource(id = R.string.text_theater),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = TextTitle,
+                        letterSpacing = 0.18.sp,
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(top = 15.dp))
+
+                // lazyrow
+
+                Spacer(modifier = Modifier.padding(top = 32.dp))
+
+                Text(
+                    text = stringResource(id = R.string.text_sport),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = TextTitle,
+                        letterSpacing = 0.18.sp,
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(top = 15.dp))
+
+                // lazyrow
+
+                Spacer(modifier = Modifier.padding(top = 32.dp))
+
+            }
 
         }
     }
