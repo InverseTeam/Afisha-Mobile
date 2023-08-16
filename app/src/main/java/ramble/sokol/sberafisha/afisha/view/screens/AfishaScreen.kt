@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.afisha.model.data.AllEventsItem
@@ -49,6 +52,7 @@ import ramble.sokol.sberafisha.afisha.view.components.CardEvents
 import ramble.sokol.sberafisha.afisha.view.components.ProgressBarAfisha
 import ramble.sokol.sberafisha.afisha.view_model.AllEventsViewModel
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ProgressBarAuth
+import ramble.sokol.sberafisha.destinations.CurrentEventsScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.ui.theme.ColorTextField
@@ -67,7 +71,9 @@ private lateinit var check: MutableState<Boolean>
 @SuppressLint("CoroutineCreationDuringComposition")
 @Destination
 @Composable
-fun AfishaScreen(){
+fun AfishaScreen(
+    navigator: DestinationsNavigator
+){
 
     val context = LocalContext.current
 
@@ -154,7 +160,6 @@ fun AfishaScreen(){
                 Spacer(modifier = Modifier.padding(top = 16.dp))
 
                 ButtonDateAfisha(text = currentDate) {
-
                 }
 
                 Spacer(modifier = Modifier.padding(top = 24.dp))
@@ -197,6 +202,7 @@ fun AfishaScreen(){
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(start = 32.dp, end = 32.dp)
             ){
 

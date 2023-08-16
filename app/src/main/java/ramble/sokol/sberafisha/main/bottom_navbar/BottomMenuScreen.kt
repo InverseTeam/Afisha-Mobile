@@ -148,7 +148,7 @@ fun BottomMenuScreen(
     }
 
     when (selectedItem){
-        0 -> AfishaScreen()
+        0 -> AfishaScreen(navigator)
         1 -> RouteScreen(navigator)
         2 -> ProfileScreen(navigator)
     }
