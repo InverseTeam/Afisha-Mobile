@@ -1,5 +1,8 @@
 package ramble.sokol.sberafisha.afisha.view.screens
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -42,7 +47,13 @@ import coil.compose.rememberAsyncImagePainter
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.annotation.Destination
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.afisha.model.data.ResponseEvents
+import ramble.sokol.sberafisha.afisha.model.service.APIAfisha
+import ramble.sokol.sberafisha.destinations.AfishaScreenDestination
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.model_project.RetrofitHelper
+import ramble.sokol.sberafisha.profile.domain.models.ResponseUserInfo
+import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonPushkin
 import ramble.sokol.sberafisha.ui.theme.BackColumn
 import ramble.sokol.sberafisha.ui.theme.ColorTextField
@@ -52,12 +63,65 @@ import ramble.sokol.sberafisha.ui.theme.CurrentEventHint
 import ramble.sokol.sberafisha.ui.theme.CurrentEventName
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import ramble.sokol.sberafisha.ui.theme.White
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+private lateinit var apiAfisha: APIAfisha
+private lateinit var cover: MutableState<String>
+private lateinit var name: MutableState<String>
+private lateinit var price: MutableState<String>
+private lateinit var date: MutableState<String>
+private lateinit var time: MutableState<String>
+private lateinit var platform: MutableState<String>
+private lateinit var description: MutableState<String>
+private lateinit var pushkin: MutableState<Boolean>
 
 @Composable
 @Destination
 fun CurrentEventsScreen (
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    id: Long
 ) {
+    val mContext = LocalContext.current
+
+    apiAfisha = RetrofitHelper.getInstance().create(APIAfisha::class.java)
+
+    cover = remember {
+        mutableStateOf("")
+    }
+
+    name = remember {
+        mutableStateOf("")
+    }
+
+    price = remember {
+        mutableStateOf("")
+    }
+
+    date = remember {
+        mutableStateOf("")
+    }
+
+    time = remember {
+        mutableStateOf("")
+    }
+
+    description = remember {
+        mutableStateOf("")
+    }
+
+    platform = remember {
+        mutableStateOf("")
+    }
+
+    pushkin = remember {
+        mutableStateOf(false)
+    }
+
+    getData(mContext, id.toInt())
+
+    Log.d("MyLog", id.toString())
 
     var clickFavorite by remember {
         mutableStateOf(false)
@@ -72,7 +136,7 @@ fun CurrentEventsScreen (
         modifier = Modifier
             .fillMaxSize()
             .background(BackColumn) ,
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -96,7 +160,7 @@ fun CurrentEventsScreen (
                         .height(28.dp)
                         .clickable {
                             navigator.popBackStack()
-                            navigator.navigate(BottomMenuScreenDestination)
+                            navigator.navigate(BottomMenuScreenDestination())
                         },
                     painter = painterResource(id = R.drawable.image_button_back),
                     contentDescription = "back before start"
@@ -125,7 +189,6 @@ fun CurrentEventsScreen (
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 32.dp),
-            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Box(
@@ -139,7 +202,7 @@ fun CurrentEventsScreen (
                         .fillMaxWidth()
                         .height(200.dp)
                         .clip(RoundedCornerShape(16.dp)),
-                    painter = painterResource(id = R.drawable.image_warning),
+                    painter = rememberAsyncImagePainter("https://inverse-tracker.store/${cover.value}"),
                     contentDescription = "image current events",
                     contentScale = ContentScale.Crop
                 )
@@ -163,7 +226,7 @@ fun CurrentEventsScreen (
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Цирк Никулина",
+                    text = name.value,
                     style = TextStyle(
                         fontSize = 20.sp,
                         lineHeight = 22.sp,
@@ -174,7 +237,7 @@ fun CurrentEventsScreen (
                 )
 
                 Text(
-                    text = "1500₽",
+                    text = "${price.value}$",
                     style = TextStyle(
                         fontSize = 20.sp,
                         lineHeight = 22.sp,
@@ -190,7 +253,7 @@ fun CurrentEventsScreen (
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "8 августа, 18:00 · Геологическая 8",
+                text = "${date.value}, ${time.value} · ${platform.value}",
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 17.6.sp,
@@ -219,7 +282,7 @@ fun CurrentEventsScreen (
             Spacer(modifier = Modifier.padding(top = 4.dp))
 
             Text(
-                text = "В настоящее время коллектив «Московский цирк на льду» под руководством Наталии Абрамовой Московского цирка Никулина на Цветном бульваре — коллектив молодых, красивых, и высокопрофессиональных артистов. Бережно сохраняя лучшие традиции",
+                text = description.value,
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
@@ -231,26 +294,55 @@ fun CurrentEventsScreen (
 
             Spacer(modifier = Modifier.padding(top = 24.dp))
 
-            Image(
-                modifier = Modifier.fillMaxWidth(),
-                painter = painterResource(id = R.drawable.image_with_pushkin),
-                contentDescription = "without pushkin"
-            )
+            if (pushkin.value) {
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    painter = painterResource(id = R.drawable.image_with_pushkin),
+                    contentDescription = "with pushkin"
+                )
+            }else{
+                Image(
+                    modifier = Modifier.fillMaxWidth(),
+                    painter = painterResource(id = R.drawable.image_without_pushkin),
+                    contentDescription = "without pushkin"
+                )
 
-            Image(
-                modifier = Modifier.fillMaxWidth(),
-                painter = painterResource(id = R.drawable.image_without_pushkin),
-                contentDescription = "without pushkin"
-            )
-            
-            Spacer(modifier = Modifier.padding(top = 8.dp))
+                Spacer(modifier = Modifier.padding(top = 8.dp))
 
-            ButtonPushkin(text = stringResource(id = R.string.text_pushkin)) {
-                
+                ButtonPushkin(text = stringResource(id = R.string.text_pushkin)) {
+                    // lcivk
+                }
             }
             
             Spacer(modifier = Modifier.padding(top = 15.dp))
 
         }
     }
+}
+
+private fun getData(context: Context, id: Int){
+    val call = apiAfisha.getCurrentEvent(id)
+
+    call.enqueue(object : Callback<ResponseEvents> {
+        override fun onResponse(call: Call<ResponseEvents>, response: Response<ResponseEvents>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                cover.value = responseBody!!.cover
+                name.value = responseBody.name
+                price.value = responseBody.price
+                time.value = responseBody.time
+                date.value = responseBody.startDate
+                description.value = responseBody.description
+                platform.value = responseBody.platform.name
+                pushkin.value = responseBody.pushkin_payment
+            } else {
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseEvents>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
+
 }

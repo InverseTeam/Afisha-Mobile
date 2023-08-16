@@ -16,7 +16,19 @@ data class ResponseEvents(
     @SerializedName("platform")
     val platform: ModelPlatform,
 
-    @SerializedName("start_date")
-    val startDate: String
+    @SerializedName("date")
+    val startDate: String,
+
+    @SerializedName("price")
+    val price: String,
+
+    @SerializedName("description")
+    val description: String,
+
+    @SerializedName("pushkin_payment")
+    val pushkin_payment: Boolean,
+
+    @SerializedName("time")
+    val time: String
 
     )

@@ -3,6 +3,7 @@ package ramble.sokol.sberafisha.afisha.view_model
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,7 +38,8 @@ class AllEventsViewModel @Inject constructor(
                 val allEvents = getAllEventsUseCase()
                 _allEvents.value = allEvents
                 //Log.d("MyLog", allEvents.toString())
-            } catch (_: Exception){
+            } catch (e: Exception){
+                Log.d("MyLog", e.toString())
                 _allEvents.value = listOf(AllEventsItem(-1, "error", "error", ModelPlatform("error"), "error"))
             }
         }

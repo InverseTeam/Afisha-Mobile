@@ -2,8 +2,6 @@ package ramble.sokol.sberafisha.afisha.view.screens
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.Context
-import android.util.Log
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -23,11 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,10 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.afisha.model.data.AllEventsItem
 import ramble.sokol.sberafisha.afisha.model.data.ResponseEvents
@@ -54,17 +48,11 @@ import ramble.sokol.sberafisha.afisha.view.components.ButtonDateAfisha
 import ramble.sokol.sberafisha.afisha.view.components.CardEvents
 import ramble.sokol.sberafisha.afisha.view.components.ProgressBarAfisha
 import ramble.sokol.sberafisha.afisha.view_model.AllEventsViewModel
-import ramble.sokol.sberafisha.authentication_and_splash.view.components.ProgressBarAuth
 import ramble.sokol.sberafisha.destinations.CurrentEventsScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
-import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.ui.theme.ColorTextField
 import ramble.sokol.sberafisha.ui.theme.TextTitle
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 
@@ -91,7 +79,6 @@ fun AfishaScreen(
     if (checkRegistration == false){
         val allEventsViewModel  = hiltViewModel<AllEventsViewModel>()
         val allEvents by allEventsViewModel.allEvents.collectAsState()
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,7 +113,10 @@ fun AfishaScreen(
                     Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
                 }else{
                     items(allEvents){ allEvents: AllEventsItem ->
-                        CardEvents(event = allEvents)
+                        CardEvents(event = allEvents){
+                            navigator.popBackStack()
+                            navigator.navigate(CurrentEventsScreenDestination(allEvents.id))
+                        }
                     }
 
                 }
@@ -163,6 +153,7 @@ fun AfishaScreen(
         )
 
         datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+
 
         Column(
             modifier = Modifier
@@ -346,5 +337,7 @@ fun AfishaScreen(
 
         }
     }
+
+
 
 }

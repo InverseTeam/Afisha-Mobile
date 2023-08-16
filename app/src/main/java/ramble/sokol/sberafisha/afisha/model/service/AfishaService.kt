@@ -16,5 +16,4 @@ class AfishaService @Inject constructor(
             events.body() ?: emptyList()
         }
     }
-
 }
