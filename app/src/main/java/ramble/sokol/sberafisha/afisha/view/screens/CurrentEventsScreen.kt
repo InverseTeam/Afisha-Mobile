@@ -143,18 +143,14 @@ fun CurrentEventsScreen (
                     contentDescription = "image current events",
                     contentScale = ContentScale.Crop
                 )
-                IconButton(
-                    modifier = Modifier
-                        .width(48.dp)
-                        .height(48.dp),
-                    onClick ={
-                        clickFavorite = !clickFavorite
-                    }
-                ){
-                    Icon(
+
+                Column(modifier = Modifier.padding(end = 15.dp, top = 15.dp)) {
+                    Image(
+                        modifier = Modifier.clickable {
+                            clickFavorite = !clickFavorite
+                        },
                         painter = iconFavorite,
-                        contentDescription = "icon favorite"
-                    )
+                        contentDescription = "icon favorite")
                 }
             }
 

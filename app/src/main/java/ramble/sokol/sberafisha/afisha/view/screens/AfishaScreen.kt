@@ -1,8 +1,10 @@
 package ramble.sokol.sberafisha.afisha.view.screens
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Context
 import android.util.Log
+import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +63,10 @@ import ramble.sokol.sberafisha.ui.theme.TextTitle
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
 
 
 private lateinit var firstEntryManager: FirstEntryManager
@@ -127,9 +134,35 @@ fun AfishaScreen(
         }
     }else{
 
+        val dayI = LocalDate.now().dayOfMonth
+        val dayS = if (dayI < 10) "0$dayI" else dayI.toString()
+        val monthI = LocalDate.now().monthValue
+        val monthS = if (monthI < 10) "0$monthI" else monthI.toString()
+
         var currentDate by remember {
-            mutableStateOf("Дата")
+            mutableStateOf("${LocalDate.now().year}-$monthS-$dayS")
         }
+
+        val year: Int
+        val month: Int
+        val day: Int
+
+        val calendar = Calendar.getInstance()
+        year = calendar.get((Calendar.YEAR))
+        month = calendar.get((Calendar.MONTH))
+        day = calendar.get((Calendar.DAY_OF_MONTH))
+        calendar.time = Date()
+
+        val datePicker = DatePickerDialog(
+            context, {
+                _: DatePicker, year: Int, month: Int, day: Int ->
+                val dayS2 = if (day < 10) "0$day" else "$day"
+                val monthS2 = if (month < 10) "0$month" else "$month"
+                currentDate = "$year-$monthS2-$dayS2"
+            }, year, month, day
+        )
+
+        datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
 
         Column(
             modifier = Modifier
@@ -159,7 +192,8 @@ fun AfishaScreen(
 
                 Spacer(modifier = Modifier.padding(top = 16.dp))
 
-                ButtonDateAfisha(text = currentDate) {
+                ButtonDateAfisha(text = currentDate.toString()) {
+                    datePicker.show()
                 }
 
                 Spacer(modifier = Modifier.padding(top = 24.dp))
