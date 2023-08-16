@@ -51,7 +51,10 @@ import ramble.sokol.sberafisha.afisha.model.data.ResponseEvents
 import ramble.sokol.sberafisha.afisha.model.service.APIAfisha
 import ramble.sokol.sberafisha.destinations.AfishaScreenDestination
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.destinations.WarningAuthScreenDestination
+import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
+import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.profile.domain.models.ResponseUserInfo
 import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonPushkin
@@ -76,6 +79,8 @@ private lateinit var time: MutableState<String>
 private lateinit var platform: MutableState<String>
 private lateinit var description: MutableState<String>
 private lateinit var pushkin: MutableState<Boolean>
+private lateinit var firstEntryManager: FirstEntryManager
+private lateinit var tokenManager: TokenManager
 
 @Composable
 @Destination
@@ -84,6 +89,10 @@ fun CurrentEventsScreen (
     id: Long
 ) {
     val mContext = LocalContext.current
+
+    firstEntryManager = FirstEntryManager(context = mContext)
+
+    tokenManager = TokenManager(context = mContext)
 
     apiAfisha = RetrofitHelper.getInstance().create(APIAfisha::class.java)
 
@@ -310,7 +319,12 @@ fun CurrentEventsScreen (
                 Spacer(modifier = Modifier.padding(top = 8.dp))
 
                 ButtonPushkin(text = stringResource(id = R.string.text_pushkin)) {
-                    // lcivk
+                    if (firstEntryManager.getFirstTest() == true){
+                        putPushkin(mContext, id.toInt())
+                    }else{
+                        navigator.popBackStack()
+                        navigator.navigate(WarningAuthScreenDestination)
+                    }
                 }
             }
             
@@ -335,6 +349,27 @@ private fun getData(context: Context, id: Int){
                 description.value = responseBody.description
                 platform.value = responseBody.platform.name
                 pushkin.value = responseBody.pushkin_payment
+            } else {
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseEvents>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
+
+}
+
+private fun putPushkin(context: Context, id: Int){
+
+    val call = apiAfisha.putWantPushkin(id, tokenManager.getToken()!!)
+
+    call.enqueue(object : Callback<ResponseEvents> {
+        override fun onResponse(call: Call<ResponseEvents>, response: Response<ResponseEvents>) {
+            if (response.isSuccessful) {
+                Toast.makeText(context, R.string.text_voice_count, Toast.LENGTH_SHORT).show()
+
             } else {
                 Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
             }

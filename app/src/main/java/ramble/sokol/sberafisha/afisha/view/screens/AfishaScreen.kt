@@ -2,6 +2,8 @@ package ramble.sokol.sberafisha.afisha.view.screens
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Context
+import android.util.Log
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -14,12 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,21 +48,25 @@ import ramble.sokol.sberafisha.afisha.model.data.ResponseEvents
 import ramble.sokol.sberafisha.afisha.model.service.APIAfisha
 import ramble.sokol.sberafisha.afisha.view.components.ButtonDateAfisha
 import ramble.sokol.sberafisha.afisha.view.components.CardEvents
+import ramble.sokol.sberafisha.afisha.view.components.CardEventsResponse
 import ramble.sokol.sberafisha.afisha.view.components.ProgressBarAfisha
 import ramble.sokol.sberafisha.afisha.view_model.AllEventsViewModel
 import ramble.sokol.sberafisha.destinations.CurrentEventsScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
+import ramble.sokol.sberafisha.model_project.RetrofitHelper
 import ramble.sokol.sberafisha.ui.theme.ColorTextField
 import ramble.sokol.sberafisha.ui.theme.TextTitle
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 
 
 private lateinit var firstEntryManager: FirstEntryManager
-private lateinit var listEvents: ArrayList<ResponseEvents>
 private lateinit var apiAfisha: APIAfisha
-private lateinit var check: MutableState<Boolean>
+private lateinit var listRecommendEvents: ArrayList<ResponseEvents>
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -124,6 +130,10 @@ fun AfishaScreen(
         }
     }else{
 
+        listRecommendEvents = arrayListOf()
+
+        apiAfisha = RetrofitHelper.getInstance().create(APIAfisha::class.java)
+
         val dayI = LocalDate.now().dayOfMonth
         val dayS = if (dayI < 10) "0$dayI" else dayI.toString()
         val monthI = LocalDate.now().monthValue
@@ -154,6 +164,7 @@ fun AfishaScreen(
 
         datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
 
+        getData(context, currentDate, null)
 
         Column(
             modifier = Modifier
@@ -220,7 +231,22 @@ fun AfishaScreen(
                 }
             }
 
-            // lasyrow
+            LazyRow(){
+                if (listRecommendEvents.isEmpty()){
+                    item {
+                        ProgressBarAfisha()
+                    }
+                }else{
+
+                    items(listRecommendEvents){
+                        event: ResponseEvents ->
+                        CardEventsResponse(event = event) {
+                            navigator.popBackStack()
+                            navigator.navigate(CurrentEventsScreenDestination(event.id))
+                        }
+                    }
+                }
+            }
             
             Spacer(modifier = Modifier.padding(top = 24.dp))
             
@@ -337,7 +363,25 @@ fun AfishaScreen(
 
         }
     }
+}
 
+private fun getData(context: Context, date: String, category: Int?){
+    val call = apiAfisha.getEventsFilter(date, category)
 
+    call.enqueue(object : Callback<ArrayList<ResponseEvents>> {
+        override fun onResponse(call: Call<ArrayList<ResponseEvents>>, response: Response<ArrayList<ResponseEvents>>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                listRecommendEvents = responseBody!!
+            } else {
+                Log.d("MyLog", response.toString())
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ArrayList<ResponseEvents>>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
 
 }

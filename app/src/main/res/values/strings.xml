@@ -82,4 +82,5 @@
     <string name="text_theater">Театр</string>
     <string name="text_sport">Спорт</string>
     <string name="text_pushkin">Хочу по “Пушкинской”</string>
+    <string name="text_voice_count">Голос засчитан</string>
 </resources>
