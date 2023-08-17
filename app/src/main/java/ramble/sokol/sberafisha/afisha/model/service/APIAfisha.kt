@@ -17,7 +17,7 @@ interface APIAfisha {
 
     // get events with filter
     @GET("api/events/filter/")
-    fun getEventsFilter(@Query("date") date: String, @Query("category") category: Int?): Call<ArrayList<ResponseEvents>>
+    fun getEventsFilter(@Query("date") date: String, @Query("category") category: Int?, @Header("Authorization") token: String): Call<ArrayList<ResponseEvents>>
 
     // get current event
     @GET("api/events/{id}/")

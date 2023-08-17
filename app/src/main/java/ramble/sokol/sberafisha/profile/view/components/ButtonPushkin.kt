@@ -29,6 +29,7 @@ import ramble.sokol.sberafisha.ui.theme.White
 @Composable
 fun ButtonPushkin(
     text: String,
+    enabled: Boolean,
     onClick: () -> Unit
 )
 {
@@ -42,7 +43,8 @@ fun ButtonPushkin(
         colors = ButtonDefaults.buttonColors(
             containerColor = ColorBackgroundTextField
         ),
-        onClick = onClick
+        onClick = onClick,
+        enabled = enabled
 
     ){
         Text(

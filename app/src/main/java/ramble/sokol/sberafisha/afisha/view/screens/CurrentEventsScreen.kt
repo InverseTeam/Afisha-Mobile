@@ -130,7 +130,7 @@ fun CurrentEventsScreen (
 
     getData(mContext, id.toInt())
 
-    Log.d("MyLog", id.toString())
+    //Log.d("MyLog", id.toString())
 
     var clickFavorite by remember {
         mutableStateOf(false)
@@ -219,7 +219,13 @@ fun CurrentEventsScreen (
                 Column(modifier = Modifier.padding(end = 15.dp, top = 15.dp)) {
                     Image(
                         modifier = Modifier.clickable {
-                            clickFavorite = !clickFavorite
+                            if (firstEntryManager.getFirstTest() == true){
+                                clickFavorite = !clickFavorite
+                            }else {
+                                navigator.popBackStack()
+                                navigator.navigate(WarningAuthScreenDestination)
+                            }
+
                         },
                         painter = iconFavorite,
                         contentDescription = "icon favorite")
@@ -246,7 +252,7 @@ fun CurrentEventsScreen (
                 )
 
                 Text(
-                    text = "${price.value}$",
+                    text = "${price.value}₽",
                     style = TextStyle(
                         fontSize = 20.sp,
                         lineHeight = 22.sp,
@@ -310,6 +316,11 @@ fun CurrentEventsScreen (
                     contentDescription = "with pushkin"
                 )
             }else{
+
+                var enabled by remember {
+                    mutableStateOf(true)
+                }
+
                 Image(
                     modifier = Modifier.fillMaxWidth(),
                     painter = painterResource(id = R.drawable.image_without_pushkin),
@@ -318,9 +329,10 @@ fun CurrentEventsScreen (
 
                 Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                ButtonPushkin(text = stringResource(id = R.string.text_pushkin)) {
+                ButtonPushkin(text = stringResource(id = R.string.text_pushkin), enabled = enabled) {
                     if (firstEntryManager.getFirstTest() == true){
                         putPushkin(mContext, id.toInt())
+                        enabled = false
                     }else{
                         navigator.popBackStack()
                         navigator.navigate(WarningAuthScreenDestination)
@@ -363,7 +375,7 @@ private fun getData(context: Context, id: Int){
 
 private fun putPushkin(context: Context, id: Int){
 
-    val call = apiAfisha.putWantPushkin(id, tokenManager.getToken()!!)
+    val call = apiAfisha.putWantPushkin(id, "Token ${tokenManager.getToken()!!}")
 
     call.enqueue(object : Callback<ResponseEvents> {
         override fun onResponse(call: Call<ResponseEvents>, response: Response<ResponseEvents>) {

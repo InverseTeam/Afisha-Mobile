@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,7 @@ import ramble.sokol.sberafisha.afisha.view_model.AllEventsViewModel
 import ramble.sokol.sberafisha.destinations.CurrentEventsScreenDestination
 import ramble.sokol.sberafisha.model_project.FirstEntryManager
 import ramble.sokol.sberafisha.model_project.RetrofitHelper
+import ramble.sokol.sberafisha.model_project.TokenManager
 import ramble.sokol.sberafisha.ui.theme.ColorTextField
 import ramble.sokol.sberafisha.ui.theme.TextTitle
 import retrofit2.Call
@@ -67,7 +69,9 @@ import java.util.Date
 private lateinit var firstEntryManager: FirstEntryManager
 private lateinit var apiAfisha: APIAfisha
 private lateinit var listRecommendEvents: ArrayList<ResponseEvents>
-
+private lateinit var checkRecommend: MutableState<Boolean>
+private lateinit var tokenManager: TokenManager
+private lateinit var currentDate: MutableState<String>
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Destination
@@ -79,6 +83,8 @@ fun AfishaScreen(
     val context = LocalContext.current
 
     firstEntryManager = FirstEntryManager(context)
+
+    tokenManager = TokenManager(context = context)
 
     val checkRegistration = firstEntryManager.getFirstTest()
 
@@ -132,14 +138,18 @@ fun AfishaScreen(
 
         listRecommendEvents = arrayListOf()
 
+        checkRecommend = remember {
+            mutableStateOf(false)
+        }
+
         apiAfisha = RetrofitHelper.getInstance().create(APIAfisha::class.java)
 
         val dayI = LocalDate.now().dayOfMonth
         val dayS = if (dayI < 10) "0$dayI" else dayI.toString()
-        val monthI = LocalDate.now().monthValue
+        val monthI = LocalDate.now().monthValue + 1
         val monthS = if (monthI < 10) "0$monthI" else monthI.toString()
 
-        var currentDate by remember {
+        currentDate = remember {
             mutableStateOf("${LocalDate.now().year}-$monthS-$dayS")
         }
 
@@ -157,89 +167,103 @@ fun AfishaScreen(
             context, {
                 _: DatePicker, year: Int, month: Int, day: Int ->
                 val dayS2 = if (day < 10) "0$day" else "$day"
-                val monthS2 = if (month < 10) "0$month" else "$month"
-                currentDate = "$year-$monthS2-$dayS2"
+                val monthS2 = if (month < 10) "0${month + 1}" else "${month + 1}"
+                currentDate.value = "$year-$monthS2-$dayS2"
             }, year, month, day
         )
 
         datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
 
-        getData(context, currentDate, null)
+        getData(context, currentDate.value, null)
 
-        Column(
+        ser(navigator = navigator, datePicker = datePicker, context)
+
+    }
+}
+
+@Composable
+private fun ser(navigator: DestinationsNavigator, datePicker: DatePickerDialog, context: Context){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, bottom = 60.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(start = 32.dp, end = 32.dp)
         ) {
-
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 32.dp, end = 32.dp)
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(id = R.string.text_poster),
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.24.sp,
-                        textAlign = TextAlign.Left
-                    )
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_poster),
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.24.sp,
+                    textAlign = TextAlign.Left
                 )
+            )
 
-                Spacer(modifier = Modifier.padding(top = 16.dp))
+            Spacer(modifier = Modifier.padding(top = 16.dp))
 
-                ButtonDateAfisha(text = currentDate.toString()) {
-                    datePicker.show()
-                }
-
-                Spacer(modifier = Modifier.padding(top = 24.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.CenterEnd
-                ){
-
-                    Column(modifier = Modifier.padding(end = 25.dp)) {
-                        Image(
-                            modifier = Modifier
-                                .width(83.45267.dp)
-                                .height(62.63379.dp),
-                            painter = painterResource(id = R.drawable.icon_text_recommendation),
-                            contentDescription = "icon recommend"
-                        )
-                    }
-
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.text_recommendations),
-                        style = TextStyle(
-                            fontSize = 32.sp,
-                            lineHeight = 35.2.sp,
-                            fontFamily = FontFamily(Font(R.font.mont_bold)),
-                            fontWeight = FontWeight(800),
-                            color = ColorTextField,
-                            textAlign = TextAlign.Center
-                        )
-                    )
-                }
+            ButtonDateAfisha(text = currentDate.value) {
+                datePicker.show()
+                getData(context, currentDate.value, null)
             }
 
-            LazyRow(){
-                if (listRecommendEvents.isEmpty()){
-                    item {
-                        ProgressBarAfisha()
-                    }
-                }else{
+            Spacer(modifier = Modifier.padding(top = 24.dp))
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ){
+
+                Column(modifier = Modifier.padding(end = 25.dp)) {
+                    Image(
+                        modifier = Modifier
+                            .width(83.45267.dp)
+                            .height(62.63379.dp),
+                        painter = painterResource(id = R.drawable.icon_text_recommendation),
+                        contentDescription = "icon recommend"
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.text_recommendations),
+                    style = TextStyle(
+                        fontSize = 32.sp,
+                        lineHeight = 35.2.sp,
+                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+                        fontWeight = FontWeight(800),
+                        color = ColorTextField,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(top = 10.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 32.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
+            ) {
+            if (!checkRecommend.value){
+                ProgressBarAfisha()
+            } else {
+                LazyRow(){
+                    Log.d("MyLog", "LazyRow")
                     items(listRecommendEvents){
-                        event: ResponseEvents ->
+                            event: ResponseEvents ->
                         CardEventsResponse(event = event) {
                             navigator.popBackStack()
                             navigator.navigate(CurrentEventsScreenDestination(event.id))
@@ -247,132 +271,136 @@ fun AfishaScreen(
                     }
                 }
             }
-            
-            Spacer(modifier = Modifier.padding(top = 24.dp))
-            
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 32.dp, end = 32.dp)
-            ){
+        }
 
-                Text(
-                    text = stringResource(id = R.string.text_concerts),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
+
+        Spacer(modifier = Modifier.padding(top = 24.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(start = 32.dp, end = 32.dp)
+        ){
+
+            Text(
+                text = stringResource(id = R.string.text_concerts),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.18.sp,
                 )
+            )
 
-                Spacer(modifier = Modifier.padding(top = 15.dp))
+            Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
-                
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+            // lazyrow
 
-                Text(
-                    text = stringResource(id = R.string.text_exposition),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
+            Spacer(modifier = Modifier.padding(top = 32.dp))
+
+            Text(
+                text = stringResource(id = R.string.text_exposition),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.18.sp,
                 )
+            )
 
-                Spacer(modifier = Modifier.padding(top = 15.dp))
+            Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
+            // lazyrow
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+            Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                Text(
-                    text = stringResource(id = R.string.text_lectures),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
+            Text(
+                text = stringResource(id = R.string.text_lectures),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.18.sp,
                 )
+            )
 
-                Spacer(modifier = Modifier.padding(top = 15.dp))
+            Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
+            // lazyrow
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+            Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                Text(
-                    text = stringResource(id = R.string.text_cinema),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
+            Text(
+                text = stringResource(id = R.string.text_cinema),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.18.sp,
                 )
+            )
 
-                Spacer(modifier = Modifier.padding(top = 15.dp))
+            Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
+            // lazyrow
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+            Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                Text(
-                    text = stringResource(id = R.string.text_theater),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
+            Text(
+                text = stringResource(id = R.string.text_theater),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.18.sp,
                 )
+            )
 
-                Spacer(modifier = Modifier.padding(top = 15.dp))
+            Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
+            // lazyrow
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+            Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                Text(
-                    text = stringResource(id = R.string.text_sport),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
+            Text(
+                text = stringResource(id = R.string.text_sport),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.18.sp,
                 )
+            )
 
-                Spacer(modifier = Modifier.padding(top = 15.dp))
+            Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
+            // lazyrow
 
-                Spacer(modifier = Modifier.padding(top = 32.dp))
-
-            }
+            Spacer(modifier = Modifier.padding(top = 32.dp))
 
         }
+
     }
 }
 
 private fun getData(context: Context, date: String, category: Int?){
-    val call = apiAfisha.getEventsFilter(date, category)
+    val call = apiAfisha.getEventsFilter(date, category, "Token ${tokenManager.getToken()!!}")
 
     call.enqueue(object : Callback<ArrayList<ResponseEvents>> {
         override fun onResponse(call: Call<ArrayList<ResponseEvents>>, response: Response<ArrayList<ResponseEvents>>) {
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 listRecommendEvents = responseBody!!
+                //Log.d("MyLog", listRecommendEvents.toString())
+                checkRecommend.value = listRecommendEvents.isNotEmpty()
+                Log.d("MyLog", checkRecommend.value.toString())
             } else {
                 Log.d("MyLog", response.toString())
                 Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()

@@ -1,14 +1,17 @@
 package ramble.sokol.sberafisha.afisha.view.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,18 +41,21 @@ fun CardEventsResponse(
     click: () -> Unit
 ){
 
+    //Log.d("MyLog", "cardEvents")
+
     Column(modifier = Modifier
-        .fillMaxWidth()
+        .width(241.dp)
+        .padding(horizontal = 4.dp)
         .clickable { click() },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Image(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
+                .height(120.dp)
+                .width(241.dp)
                 .clip(RoundedCornerShape(16.dp)),
-            painter = rememberAsyncImagePainter("https://inverse-tracker.store/${event.cover}"),
+            painter = rememberAsyncImagePainter(event.cover),
             contentDescription = "image events",
             contentScale = ContentScale.Crop
         )
@@ -61,12 +67,15 @@ fun CardEventsResponse(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
 
+            var textName = ""
+            textName = if (event.name.length < 20) event.name
+            else "${event.name.substring(0,18)}..."
+
             Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = event.name,
+                text = textName,
                 style = TextStyle(
-                    fontSize = 19.7.sp,
-                    lineHeight = 21.67.sp,
+                    fontSize = 14.sp,
+                    lineHeight = 15.4.sp,
                     fontFamily = FontFamily(Font(R.font.mont_bold)),
                     fontWeight = FontWeight(700),
                     color = Color(0xFF222222),
@@ -75,7 +84,7 @@ fun CardEventsResponse(
             )
 
             Text(
-                text = event.price,
+                text = "${event.price}₽",
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 15.4.sp,
@@ -94,8 +103,8 @@ fun CardEventsResponse(
             modifier = Modifier.fillMaxWidth(),
             text = "${event.startDate}  ·  ${event.platform.name}",
             style = TextStyle(
-                fontSize = 16.89.sp,
-                lineHeight = 18.58.sp,
+                fontSize = 12.sp,
+                lineHeight = 13.2.sp,
                 fontFamily = FontFamily(Font(R.font.mont_semibold)),
                 fontWeight = FontWeight(500),
                 color = Color(0xFF6B6B6B),

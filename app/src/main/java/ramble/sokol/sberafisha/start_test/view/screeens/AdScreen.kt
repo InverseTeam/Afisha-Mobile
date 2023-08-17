@@ -1,5 +1,6 @@
 package ramble.sokol.sberafisha.start_test.view.screeens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -111,6 +112,8 @@ fun AdScreen(
             }
 
             Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            Log.d("MyLog", "${firstEntryManager.getFirstEntry()} ${firstEntryManager.getFirstTest()}")
 
             ButtonForAdToApp(text = stringResource(id = R.string.text_to_app)) {
                 if (firstEntryManager.getFirstTest() == false && firstEntryManager.getFirstEntry() == true){
