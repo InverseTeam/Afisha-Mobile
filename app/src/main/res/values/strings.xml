@@ -85,4 +85,5 @@
     <string name="text_voice_count">Голос засчитан</string>
     <string name="text_add_to_favorite">Добавлено в избранное</string>
     <string name="text_remove_to_favorite">Удаленно из избранного</string>
+    <string name="text_favorite">Избранное</string>
 </resources>

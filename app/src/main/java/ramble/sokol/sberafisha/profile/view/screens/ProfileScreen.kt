@@ -2,6 +2,7 @@ package ramble.sokol.sberafisha.profile.view.screens
 
 import DropDownLanguageProfile
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -15,6 +16,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
@@ -44,9 +48,14 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineExceptionHandler
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.afisha.model.data.ResponseEvents
+import ramble.sokol.sberafisha.afisha.view.components.CardEvents
+import ramble.sokol.sberafisha.afisha.view.components.CardEventsResponse
+import ramble.sokol.sberafisha.afisha.view.components.ProgressBarAfisha
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntry
 import ramble.sokol.sberafisha.authentication_and_splash.view.components.ButtonForEntryToRegistration
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.destinations.CurrentEventsScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.destinations.ProfileScreenDestination
 import ramble.sokol.sberafisha.destinations.RegistrationScreenDestination
@@ -58,6 +67,7 @@ import ramble.sokol.sberafisha.profile.domain.utils.APIProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonExitProfile
 import ramble.sokol.sberafisha.profile.view.components.ButtonForEntryProfile
+import ramble.sokol.sberafisha.profile.view.components.CardFavoriteEvents
 import ramble.sokol.sberafisha.profile.view.components.TextInputAgeProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputNameProfile
 import ramble.sokol.sberafisha.profile.view.components.TextInputSurnameProfile
@@ -75,6 +85,8 @@ private lateinit var firstEntryManager: FirstEntryManager
 private lateinit var name: MutableState<String>
 private lateinit var surname: MutableState<String>
 private lateinit var age: MutableState<String>
+private lateinit var listFavoriteEvents: ArrayList<ResponseEvents>
+private lateinit var checkFavorite: MutableState<Boolean>
 
 @Destination
 @Composable
@@ -145,6 +157,13 @@ fun ProfileScreen(
             throwable.printStackTrace()
         }
 
+        listFavoriteEvents = arrayListOf()
+
+        checkFavorite = remember {
+            mutableStateOf(false)
+        }
+
+
         apiProfile = RetrofitHelper.getInstance().create(APIProfile::class.java)
 
         name = remember {
@@ -167,110 +186,151 @@ fun ProfileScreen(
 
         getData(mContext)
 
+        getFavorite(mContext)
+
+        ser(navigator)
+    }
+}
+
+@Composable
+fun ser(navigator: DestinationsNavigator){
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(top = 16.dp, start = 32.dp, end = 32.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(id = R.string.text_profile),
+            style = TextStyle(
+                fontSize = 24.sp,
+                fontFamily = FontFamily(Font(R.font.mont_bold)),
+                fontWeight = FontWeight(800),
+                color = TextTitle,
+                letterSpacing = 0.24.sp,
+                textAlign = TextAlign.Left
+            )
+        )
+
+        Spacer(modifier = Modifier.padding(top = 24.dp))
+
+        TextInputNameProfile(
+            text = name.value,
+            onValueChange = {
+                name.value = it
+            },
+            interactionSource = remember { MutableInteractionSource() }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                // click on textfield
+                            }
+                        }
+                    }
+                },
+            enabled = false
+        )
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+        TextInputSurnameProfile(
+            text = surname.value,
+            onValueChange = {
+                surname.value = it
+            },
+            interactionSource = remember {
+                MutableInteractionSource()
+            }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                // click on textfield
+                            }
+                        }
+                    }
+                },
+            enabled = false
+        )
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+        TextInputAgeProfile(
+            text = age.value,
+            onValueChange = {
+                age.value = it
+            },
+            interactionSource = remember {
+                MutableInteractionSource()
+            }
+                .also { interactionSource ->
+                    LaunchedEffect(interactionSource) {
+                        interactionSource.interactions.collect {
+                            if (it is PressInteraction.Release) {
+                                // click on textfield
+                            }
+                        }
+                    }
+                },
+            enabled = false
+        )
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+        // drop down
+        DropDownLanguageProfile()
+
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+        ButtonExitProfile(
+            text = stringResource(id = R.string.text_exit)
+        ) {
+            tokenManager.saveToken("")
+            firstEntryManager.saveFirstEntry(false)
+            firstEntryManager.saveFirstTest(false)
+            navigator.popBackStack()
+            navigator.navigate(BottomMenuScreenDestination)
+        }
+
+        Spacer(modifier = Modifier.padding(top = 32.dp))
+
+        Text(
+            text = stringResource(id = R.string.text_favorite),
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontFamily = FontFamily(Font(R.font.mont_bold)),
+                fontWeight = FontWeight(800),
+                color = TextTitle,
+                letterSpacing = 0.18.sp,
+            )
+        )
+
+        Spacer(modifier = Modifier.padding(top = 15.dp))
+
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(top = 16.dp, start = 32.dp, end = 32.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.text_profile),
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.mont_bold)),
-                    fontWeight = FontWeight(800),
-                    color = TextTitle,
-                    letterSpacing = 0.24.sp,
-                    textAlign = TextAlign.Left
-                )
-            )
-
-            Spacer(modifier = Modifier.padding(top = 24.dp))
-
-            TextInputNameProfile(
-                text = name.value,
-                onValueChange = {
-                    name.value = it
-                },
-                interactionSource = remember { MutableInteractionSource() }
-                    .also { interactionSource ->
-                        LaunchedEffect(interactionSource) {
-                            interactionSource.interactions.collect {
-                                if (it is PressInteraction.Release) {
-                                    // click on textfield
-                                }
-                            }
+            if (!checkFavorite.value) {
+                ProgressBarAfisha()
+            } else {
+                LazyColumn() {
+                    Log.d("MyLog", "LazyRow")
+                    items(listFavoriteEvents) { event: ResponseEvents ->
+                        CardFavoriteEvents(event = event) {
+                            navigator.popBackStack()
+                            navigator.navigate(CurrentEventsScreenDestination(event.id))
                         }
-                    },
-                enabled = false
-            )
-
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-
-            TextInputSurnameProfile(
-                text = surname.value,
-                onValueChange = {
-                    surname.value = it
-                },
-                interactionSource = remember {
-                    MutableInteractionSource()
+                    }
                 }
-                    .also { interactionSource ->
-                        LaunchedEffect(interactionSource) {
-                            interactionSource.interactions.collect {
-                                if (it is PressInteraction.Release) {
-                                    // click on textfield
-                                }
-                            }
-                        }
-                    },
-                enabled = false
-            )
-
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-
-            TextInputAgeProfile(
-                text = age.value,
-                onValueChange = {
-                    age.value = it
-                },
-                interactionSource = remember {
-                    MutableInteractionSource()
-                }
-                    .also { interactionSource ->
-                        LaunchedEffect(interactionSource) {
-                            interactionSource.interactions.collect {
-                                if (it is PressInteraction.Release) {
-                                    // click on textfield
-                                }
-                            }
-                        }
-                    },
-                enabled = false
-            )
-
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-
-            // drop down
-            DropDownLanguageProfile()
-
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-
-            ButtonExitProfile(
-                text = stringResource(id = R.string.text_exit)
-            ) {
-                tokenManager.saveToken("")
-                firstEntryManager.saveFirstEntry(false)
-                firstEntryManager.saveFirstTest(false)
-                navigator.popBackStack()
-                navigator.navigate(BottomMenuScreenDestination)
             }
-
-            Spacer(modifier = Modifier.padding(top = 32.dp))
-
         }
+
     }
 }
 
@@ -293,6 +353,30 @@ private fun getData(context: Context){
         }
 
         override fun onFailure(call: Call<ResponseUserInfo>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
+
+}
+
+private fun getFavorite(context: Context){
+    val call = apiProfile.getFavorites("Token ${tokenManager.getToken()!!}")
+
+    call.enqueue(object : Callback<ArrayList<ResponseEvents>> {
+        override fun onResponse(call: Call<ArrayList<ResponseEvents>>, response: Response<ArrayList<ResponseEvents>>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                listFavoriteEvents = responseBody!!
+                Log.d("MyLog", listFavoriteEvents.toString())
+                checkFavorite.value = listFavoriteEvents.isNotEmpty()
+                Log.d("MyLog", checkFavorite.value.toString())
+            } else {
+                Log.d("MyLog", response.toString())
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ArrayList<ResponseEvents>>, t: Throwable) {
             Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
         }
     })
