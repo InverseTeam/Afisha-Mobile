@@ -72,6 +72,8 @@ private lateinit var listRecommendEvents: ArrayList<ResponseEvents>
 private lateinit var checkRecommend: MutableState<Boolean>
 private lateinit var listConcert: ArrayList<ResponseEvents>
 private lateinit var checkConcert: MutableState<Boolean>
+private lateinit var listCinema: ArrayList<ResponseEvents>
+private lateinit var checkCinema: MutableState<Boolean>
 private lateinit var tokenManager: TokenManager
 private lateinit var currentDate: MutableState<String>
 
@@ -150,6 +152,12 @@ fun AfishaScreen(
             mutableStateOf(false)
         }
 
+        listCinema = arrayListOf()
+
+        checkCinema = remember {
+            mutableStateOf(false)
+        }
+
         apiAfisha = RetrofitHelper.getInstance().create(APIAfisha::class.java)
 
         val dayI = LocalDate.now().dayOfMonth
@@ -177,6 +185,9 @@ fun AfishaScreen(
                 val dayS2 = if (day < 10) "0$day" else "$day"
                 val monthS2 = if (month < 10) "0${month + 1}" else "${month + 1}"
                 currentDate.value = "$year-$monthS2-$dayS2"
+                checkCinema.value = false
+                checkRecommend.value = false
+                checkConcert.value = false
             }, year, month, day
         )
 
@@ -185,6 +196,7 @@ fun AfishaScreen(
         getData(context, currentDate.value, null)
 
         getData(context, currentDate.value, 10)
+        getData(context, currentDate.value, 26)
 
         ser(navigator = navigator, datePicker = datePicker, context)
 
@@ -223,7 +235,6 @@ private fun ser(navigator: DestinationsNavigator, datePicker: DatePickerDialog, 
 
             ButtonDateAfisha(text = currentDate.value) {
                 datePicker.show()
-                getData(context, currentDate.value, null)
             }
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
@@ -372,7 +383,26 @@ private fun ser(navigator: DestinationsNavigator, datePicker: DatePickerDialog, 
 
                 Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    if (!checkCinema.value) {
+                        ProgressBarAfisha()
+                    } else {
+                        LazyRow() {
+                            Log.d("MyLog", "LazyRowCinema")
+                            items(listCinema) { event: ResponseEvents ->
+                                CardEventsResponse(event = event) {
+                                    navigator.popBackStack()
+                                    navigator.navigate(CurrentEventsScreenDestination(event.id))
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.padding(top = 32.dp))
 
@@ -421,18 +451,28 @@ private fun getData(context: Context, date: String, category: Int?){
     call.enqueue(object : Callback<ArrayList<ResponseEvents>> {
         override fun onResponse(call: Call<ArrayList<ResponseEvents>>, response: Response<ArrayList<ResponseEvents>>) {
             if (response.isSuccessful) {
-                if (category == 10){
-                    val responseBody = response.body()
-                    listConcert = responseBody!!
-                    //Log.d("MyLog", listRecommendEvents.toString())
-                    checkConcert.value = listConcert.isNotEmpty()
-                    //Log.d("MyLog", checkRecommend.value.toString())
-                }else {
-                    val responseBody = response.body()
-                    listRecommendEvents = responseBody!!
-                    //Log.d("MyLog", listRecommendEvents.toString())
-                    checkRecommend.value = listRecommendEvents.isNotEmpty()
-                    Log.d("MyLog", checkRecommend.value.toString())
+                when (category) {
+                    10 -> {
+                        val responseBody = response.body()
+                        listConcert = responseBody!!
+                        //Log.d("MyLog", listRecommendEvents.toString())
+                        checkConcert.value = listConcert.isNotEmpty()
+                        //Log.d("MyLog", checkRecommend.value.toString())
+                    }
+                    26 -> {
+                        val responseBody = response.body()
+                        listCinema = responseBody!!
+                        //Log.d("MyLog", listRecommendEvents.toString())
+                        checkCinema.value = listCinema.isNotEmpty()
+                        //Log.d("MyLog", checkRecommend.value.toString())
+                    }
+                    null -> {
+                        val responseBody = response.body()
+                        listRecommendEvents = responseBody!!
+                        //Log.d("MyLog", listRecommendEvents.toString())
+                        checkRecommend.value = listRecommendEvents.isNotEmpty()
+                        Log.d("MyLog", checkRecommend.value.toString())
+                    }
                 }
             } else {
                 Log.d("MyLog", response.toString())
