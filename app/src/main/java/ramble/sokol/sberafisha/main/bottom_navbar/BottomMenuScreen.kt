@@ -32,6 +32,7 @@ import ramble.sokol.sberafisha.ui.theme.ColorTextHint
 import ramble.sokol.sberafisha.ui.theme.ColorTrueNav
 import ramble.sokol.sberafisha.ui.theme.White
 import com.ramcosta.composedestinations.annotation.Destination
+import ramble.sokol.sberafisha.ActuallyScreen
 import ramble.sokol.sberafisha.afisha.view.screens.AfishaScreen
 import ramble.sokol.sberafisha.profile.view.screens.ProfileScreen
 import ramble.sokol.sberafisha.R
@@ -124,17 +125,45 @@ fun BottomMenuScreen(
                 icon = {
                     Icon(
                         modifier = Modifier
-                            .width(23.dp)
-                            .height(23.dp),
-                        painter = painterResource(id = R.drawable.logo_profile),
-                        contentDescription = "Profile",
+                            .width(24.dp)
+                            .height(24.dp),
+                        painter = painterResource(id = R.drawable.icon_actually),
+                        contentDescription = "Actually",
                         tint = if (selectedItem == 2) ColorTrueNav else ColorTextHint
                     )
                 },
                 label = {
                     Text(
-                        text = stringResource(id = R.string.text_profile),
+                        text = stringResource(id = R.string.text_actually),
                         color = if (selectedItem == 2) ColorTrueNav else ColorTextHint,
+                        style = TextStyle(
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
+                            fontFamily = FontFamily(Font(R.font.mont_semibold)),
+                            fontWeight = FontWeight(700)
+                        )
+                    )
+                }
+            )
+            BottomNavigationItem(
+                selected = selectedItem == 3,
+                onClick = {
+                    selectedItem = 3
+                },
+                icon = {
+                    Icon(
+                        modifier = Modifier
+                            .width(23.dp)
+                            .height(23.dp),
+                        painter = painterResource(id = R.drawable.logo_profile),
+                        contentDescription = "Profile",
+                        tint = if (selectedItem == 3) ColorTrueNav else ColorTextHint
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.text_profile),
+                        color = if (selectedItem == 3) ColorTrueNav else ColorTextHint,
                         style = TextStyle(
                             fontSize = 10.sp,
                             lineHeight = 12.sp,
@@ -150,7 +179,8 @@ fun BottomMenuScreen(
     when (selectedItem){
         0 -> AfishaScreen(navigator)
         1 -> RouteScreen(navigator)
-        2 -> ProfileScreen(navigator)
+        2 -> ActuallyScreen(navigator)
+        3 -> ProfileScreen(navigator)
     }
 
 }

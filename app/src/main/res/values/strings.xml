@@ -15,6 +15,7 @@
     <string name="text_entrance">Вход</string>
     <string name="text_poster">Афиша</string>
     <string name="text_router">Маршруты</string>
+    <string name="text_actually">Актуальное</string>
     <string name="text_profile">Профиль</string>
     <string name="text_incorrect_data_entry">Неверный логин или пароль</string>
     <string name="text_toast_no_internet">Проверьте подключение к интернету</string>
