@@ -220,6 +220,11 @@ fun CurrentEventsScreen (
                     Image(
                         modifier = Modifier.clickable {
                             if (firstEntryManager.getFirstTest() == true){
+                                if (clickFavorite){
+                                    putRemoveFavorite(context = mContext, id = id.toInt())
+                                }else{
+                                    putFavorite(context = mContext, id = id.toInt())
+                                }
                                 clickFavorite = !clickFavorite
                             }else {
                                 navigator.popBackStack()
@@ -381,6 +386,48 @@ private fun putPushkin(context: Context, id: Int){
         override fun onResponse(call: Call<ResponseEvents>, response: Response<ResponseEvents>) {
             if (response.isSuccessful) {
                 Toast.makeText(context, R.string.text_voice_count, Toast.LENGTH_SHORT).show()
+
+            } else {
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseEvents>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
+
+}
+
+private fun putFavorite(context: Context, id: Int){
+
+    val call = apiAfisha.putFavoriteEvent(id, "Token ${tokenManager.getToken()!!}")
+
+    call.enqueue(object : Callback<ResponseEvents> {
+        override fun onResponse(call: Call<ResponseEvents>, response: Response<ResponseEvents>) {
+            if (response.isSuccessful) {
+                Toast.makeText(context, R.string.text_add_to_favorite, Toast.LENGTH_SHORT).show()
+
+            } else {
+                Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseEvents>, t: Throwable) {
+            Toast.makeText(context, R.string.text_toast_no_internet, Toast.LENGTH_SHORT).show()
+        }
+    })
+
+}
+
+private fun putRemoveFavorite(context: Context, id: Int){
+
+    val call = apiAfisha.putRemoveFavoriteEvent(id, "Token ${tokenManager.getToken()!!}")
+
+    call.enqueue(object : Callback<ResponseEvents> {
+        override fun onResponse(call: Call<ResponseEvents>, response: Response<ResponseEvents>) {
+            if (response.isSuccessful) {
+                Toast.makeText(context, R.string.text_remove_to_favorite, Toast.LENGTH_SHORT).show()
 
             } else {
                 Toast.makeText(context, R.string.text_appeared_error, Toast.LENGTH_SHORT).show()

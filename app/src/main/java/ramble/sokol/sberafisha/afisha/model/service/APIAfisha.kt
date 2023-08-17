@@ -26,4 +26,12 @@ interface APIAfisha {
     //put for plus pushkin
     @PUT("api/events/{id}/pushkin_wants/add/")
     fun putWantPushkin(@Path("id") id: Int, @Header("Authorization") token: String): Call<ResponseEvents>
+
+    // put for add favorite event
+    @PUT("api/events/favorites/add/{id}/")
+    fun putFavoriteEvent(@Path("id") id: Int, @Header("Authorization") token: String): Call<ResponseEvents>
+
+    // put for remove favorite event
+    @PUT("api/events/favorites/add/{id}/")
+    fun putRemoveFavoriteEvent(@Path("id") id: Int, @Header("Authorization") token: String): Call<ResponseEvents>
 }
