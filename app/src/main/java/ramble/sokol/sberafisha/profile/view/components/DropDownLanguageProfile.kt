@@ -65,7 +65,6 @@ fun DropDownLanguageProfile() {
 
             Column (
                 modifier = Modifier
-                    .fillMaxHeight()
                     .padding(bottom = 5.dp),
                 verticalArrangement = Arrangement.Top
             ){

@@ -180,7 +180,7 @@ fun AfishaScreen(
             }, year, month, day
         )
 
-        datePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+        datePicker.datePicker.minDate = System.currentTimeMillis() - 1000;
 
         getData(context, currentDate.value, null)
 

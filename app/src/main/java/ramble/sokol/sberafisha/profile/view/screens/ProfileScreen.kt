@@ -196,7 +196,7 @@ fun ProfileScreen(
 fun ser(navigator: DestinationsNavigator){
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
             .padding(top = 16.dp, start = 32.dp, end = 32.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -216,110 +216,115 @@ fun ser(navigator: DestinationsNavigator){
 
         Spacer(modifier = Modifier.padding(top = 24.dp))
 
-        TextInputNameProfile(
-            text = name.value,
-            onValueChange = {
-                name.value = it
-            },
-            interactionSource = remember { MutableInteractionSource() }
-                .also { interactionSource ->
-                    LaunchedEffect(interactionSource) {
-                        interactionSource.interactions.collect {
-                            if (it is PressInteraction.Release) {
-                                // click on textfield
-                            }
-                        }
-                    }
-                },
-            enabled = false
-        )
-
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        TextInputSurnameProfile(
-            text = surname.value,
-            onValueChange = {
-                surname.value = it
-            },
-            interactionSource = remember {
-                MutableInteractionSource()
-            }
-                .also { interactionSource ->
-                    LaunchedEffect(interactionSource) {
-                        interactionSource.interactions.collect {
-                            if (it is PressInteraction.Release) {
-                                // click on textfield
-                            }
-                        }
-                    }
-                },
-            enabled = false
-        )
-
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        TextInputAgeProfile(
-            text = age.value,
-            onValueChange = {
-                age.value = it
-            },
-            interactionSource = remember {
-                MutableInteractionSource()
-            }
-                .also { interactionSource ->
-                    LaunchedEffect(interactionSource) {
-                        interactionSource.interactions.collect {
-                            if (it is PressInteraction.Release) {
-                                // click on textfield
-                            }
-                        }
-                    }
-                },
-            enabled = false
-        )
-
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        // drop down
-        DropDownLanguageProfile()
-
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-
-        ButtonExitProfile(
-            text = stringResource(id = R.string.text_exit)
-        ) {
-            tokenManager.saveToken("")
-            firstEntryManager.saveFirstEntry(false)
-            firstEntryManager.saveFirstTest(false)
-            navigator.popBackStack()
-            navigator.navigate(BottomMenuScreenDestination)
-        }
-
-        Spacer(modifier = Modifier.padding(top = 32.dp))
-
-        Text(
-            text = stringResource(id = R.string.text_favorite),
-            style = TextStyle(
-                fontSize = 18.sp,
-                fontFamily = FontFamily(Font(R.font.mont_bold)),
-                fontWeight = FontWeight(800),
-                color = TextTitle,
-                letterSpacing = 0.18.sp,
-            )
-        )
-
-        Spacer(modifier = Modifier.padding(top = 15.dp))
-
-        Column(
+        Column (
             modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
+                .fillMaxWidth()
+                .padding(bottom = 60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
+            TextInputNameProfile(
+                text = name.value,
+                onValueChange = {
+                    name.value = it
+                },
+                interactionSource = remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    // click on textfield
+                                }
+                            }
+                        }
+                    },
+                enabled = false
+            )
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            TextInputSurnameProfile(
+                text = surname.value,
+                onValueChange = {
+                    surname.value = it
+                },
+                interactionSource = remember {
+                    MutableInteractionSource()
+                }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    // click on textfield
+                                }
+                            }
+                        }
+                    },
+                enabled = false
+            )
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            TextInputAgeProfile(
+                text = age.value,
+                onValueChange = {
+                    age.value = it
+                },
+                interactionSource = remember {
+                    MutableInteractionSource()
+                }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    // click on textfield
+                                }
+                            }
+                        }
+                    },
+                enabled = false
+            )
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            // drop down
+            DropDownLanguageProfile()
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
+            ButtonExitProfile(
+                text = stringResource(id = R.string.text_exit)
+            ) {
+                tokenManager.saveToken("")
+                firstEntryManager.saveFirstEntry(false)
+                firstEntryManager.saveFirstTest(false)
+                navigator.popBackStack()
+                navigator.navigate(BottomMenuScreenDestination)
+            }
+
+            Spacer(modifier = Modifier.padding(top = 32.dp))
+
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.text_favorite),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.mont_bold)),
+                    fontWeight = FontWeight(800),
+                    color = TextTitle,
+                    letterSpacing = 0.18.sp,
+                    textAlign = TextAlign.Start
+                )
+            )
+
+            Spacer(modifier = Modifier.padding(top = 15.dp))
+
             if (!checkFavorite.value) {
                 ProgressBarAfisha()
             } else {
-                LazyColumn() {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     Log.d("MyLog", "LazyRow")
                     items(listFavoriteEvents) { event: ResponseEvents ->
                         CardFavoriteEvents(event = event) {
@@ -330,7 +335,6 @@ fun ser(navigator: DestinationsNavigator){
                 }
             }
         }
-
     }
 }
 
