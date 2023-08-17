@@ -3,6 +3,7 @@ package ramble.sokol.sberafisha.afisha.view.screens
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -348,6 +349,11 @@ fun CurrentEventsScreen (
             Spacer(modifier = Modifier.padding(top = 15.dp))
 
         }
+    }
+
+    BackHandler {
+        navigator.popBackStack()
+        navigator.navigate(BottomMenuScreenDestination)
     }
 }
 

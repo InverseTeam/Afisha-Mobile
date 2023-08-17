@@ -3,6 +3,7 @@ package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -527,6 +528,12 @@ fun RegistrationScreen(
             )
         }
     }
+
+    BackHandler {
+        navigator.popBackStack()
+        navigator.navigate(EntryScreenDestination)
+    }
+
 }
 
 private fun isValidEmail(email: String): Boolean {

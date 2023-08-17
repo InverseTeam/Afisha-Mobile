@@ -1,5 +1,6 @@
 package ramble.sokol.sberafisha.routes.view.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,6 +41,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.destinations.BeforeTestScreenDestination
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
+import ramble.sokol.sberafisha.destinations.EntryScreenDestination
 import ramble.sokol.sberafisha.destinations.MapAfterTestScreenDestination
 import ramble.sokol.sberafisha.destinations.RouteScreenDestination
 import ramble.sokol.sberafisha.profile.view.components.ButtonChangeProfile
@@ -231,6 +233,11 @@ fun TestRouterScreen(
             }
         }
 
+    }
+
+    BackHandler {
+        navigator.popBackStack()
+        navigator.navigate(BeforeTestScreenDestination)
     }
 
 }

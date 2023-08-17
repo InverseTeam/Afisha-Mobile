@@ -1,5 +1,6 @@
 package ramble.sokol.sberafisha.start_test.view.screeens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -150,6 +151,11 @@ fun WarningAuthScreen(
 
         }
 
+    }
+
+    BackHandler {
+        navigator.popBackStack()
+        navigator.navigate(BottomMenuScreenDestination)
     }
 
 }

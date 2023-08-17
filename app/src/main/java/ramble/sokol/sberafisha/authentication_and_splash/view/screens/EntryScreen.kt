@@ -2,6 +2,7 @@ package ramble.sokol.sberafisha.authentication_and_splash.view.screens
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -324,6 +325,7 @@ fun EntryScreen(
             )
         }
     }
+
 }
 
 private fun entry(context: Context, navigator: DestinationsNavigator, email: String, password: String){
@@ -356,6 +358,7 @@ private fun entry(context: Context, navigator: DestinationsNavigator, email: Str
             progressEntryState.value = false
         }
     })
+
 
 }
 
