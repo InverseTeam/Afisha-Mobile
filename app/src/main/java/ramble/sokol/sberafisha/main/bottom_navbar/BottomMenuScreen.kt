@@ -32,7 +32,7 @@ import ramble.sokol.sberafisha.ui.theme.ColorTextHint
 import ramble.sokol.sberafisha.ui.theme.ColorTrueNav
 import ramble.sokol.sberafisha.ui.theme.White
 import com.ramcosta.composedestinations.annotation.Destination
-import ramble.sokol.sberafisha.ActuallyScreen
+import ramble.sokol.sberafisha.actually.view.screens.ActuallyScreen
 import ramble.sokol.sberafisha.afisha.view.screens.AfishaScreen
 import ramble.sokol.sberafisha.profile.view.screens.ProfileScreen
 import ramble.sokol.sberafisha.R

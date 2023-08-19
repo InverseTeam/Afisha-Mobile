@@ -87,4 +87,7 @@
     <string name="text_add_to_favorite">Добавлено в избранное</string>
     <string name="text_remove_to_favorite">Удаленно из избранного</string>
     <string name="text_favorite">Избранное</string>
+    <string name="text_sport_holiday">Спортивные выходные</string>
+    <string name="text_ekb_music">Музыкальный Екатеринубрг</string>
+    <string name="text_street_art">Столица стрит-арта</string>
 </resources>

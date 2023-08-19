@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ramble.sokol.sberafisha.R
+import ramble.sokol.sberafisha.destinations.AfterTestScreenDestination
 import ramble.sokol.sberafisha.destinations.BeforeTestScreenDestination
 import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
 import ramble.sokol.sberafisha.destinations.EntryScreenDestination
@@ -227,7 +228,7 @@ fun TestRouterScreen(
                         clickNumber = 0
                     }else{
                         navigator.popBackStack()
-                        navigator.navigate(MapAfterTestScreenDestination)
+                        navigator.navigate(AfterTestScreenDestination)
                     }
                 }
             }

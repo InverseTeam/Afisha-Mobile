@@ -27,7 +27,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -74,6 +73,8 @@ private lateinit var listConcert: ArrayList<ResponseEvents>
 private lateinit var checkConcert: MutableState<Boolean>
 private lateinit var listCinema: ArrayList<ResponseEvents>
 private lateinit var checkCinema: MutableState<Boolean>
+private lateinit var listTheater: ArrayList<ResponseEvents>
+private lateinit var checkTheater: MutableState<Boolean>
 private lateinit var tokenManager: TokenManager
 private lateinit var currentDate: MutableState<String>
 
@@ -158,6 +159,12 @@ fun AfishaScreen(
             mutableStateOf(false)
         }
 
+        listTheater = arrayListOf()
+
+        checkTheater = remember {
+            mutableStateOf(false)
+        }
+
         apiAfisha = RetrofitHelper.getInstance().create(APIAfisha::class.java)
 
         val dayI = LocalDate.now().dayOfMonth
@@ -188,15 +195,16 @@ fun AfishaScreen(
                 checkCinema.value = false
                 checkRecommend.value = false
                 checkConcert.value = false
+                checkTheater.value = false
             }, year, month, day
         )
 
         datePicker.datePicker.minDate = System.currentTimeMillis() - 1000;
 
         getData(context, currentDate.value, null)
-
         getData(context, currentDate.value, 10)
         getData(context, currentDate.value, 26)
+        getData(context, currentDate.value, 20)
 
         ser(navigator = navigator, datePicker = datePicker, context)
 
@@ -336,39 +344,39 @@ private fun ser(navigator: DestinationsNavigator, datePicker: DatePickerDialog, 
 
                 Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                Text(
-                    text = stringResource(id = R.string.text_exposition),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
-                )
+//                Text(
+//                    text = stringResource(id = R.string.text_exposition),
+//                    style = TextStyle(
+//                        fontSize = 18.sp,
+//                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+//                        fontWeight = FontWeight(800),
+//                        color = TextTitle,
+//                        letterSpacing = 0.18.sp,
+//                    )
+//                )
+//
+//                Spacer(modifier = Modifier.padding(top = 15.dp))
+//
+//                // lazyrow
+//
+//                Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                Spacer(modifier = Modifier.padding(top = 15.dp))
-
-                // lazyrow
-
-                Spacer(modifier = Modifier.padding(top = 32.dp))
-
-                Text(
-                    text = stringResource(id = R.string.text_lectures),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
-                )
-
-                Spacer(modifier = Modifier.padding(top = 15.dp))
-
-                // lazyrow
-
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+//                Text(
+//                    text = stringResource(id = R.string.text_lectures),
+//                    style = TextStyle(
+//                        fontSize = 18.sp,
+//                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+//                        fontWeight = FontWeight(800),
+//                        color = TextTitle,
+//                        letterSpacing = 0.18.sp,
+//                    )
+//                )
+//
+//                Spacer(modifier = Modifier.padding(top = 15.dp))
+//
+//                // lazyrow
+//
+//                Spacer(modifier = Modifier.padding(top = 32.dp))
 
                 Text(
                     text = stringResource(id = R.string.text_cinema),
@@ -419,26 +427,45 @@ private fun ser(navigator: DestinationsNavigator, datePicker: DatePickerDialog, 
 
                 Spacer(modifier = Modifier.padding(top = 15.dp))
 
-                // lazyrow
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    if (!checkTheater.value) {
+                        ProgressBarAfisha()
+                    } else {
+                        LazyRow() {
+                            Log.d("MyLog", "LazyRowTheater")
+                            items(listTheater) { event: ResponseEvents ->
+                                CardEventsResponse(event = event) {
+                                    navigator.popBackStack()
+                                    navigator.navigate(CurrentEventsScreenDestination(event.id))
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.padding(top = 32.dp))
 
-                Text(
-                    text = stringResource(id = R.string.text_sport),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.mont_bold)),
-                        fontWeight = FontWeight(800),
-                        color = TextTitle,
-                        letterSpacing = 0.18.sp,
-                    )
-                )
-
-                Spacer(modifier = Modifier.padding(top = 15.dp))
-
-                // lazyrow
-
-                Spacer(modifier = Modifier.padding(top = 32.dp))
+//                Text(
+//                    text = stringResource(id = R.string.text_sport),
+//                    style = TextStyle(
+//                        fontSize = 18.sp,
+//                        fontFamily = FontFamily(Font(R.font.mont_bold)),
+//                        fontWeight = FontWeight(800),
+//                        color = TextTitle,
+//                        letterSpacing = 0.18.sp,
+//                    )
+//                )
+//
+//                Spacer(modifier = Modifier.padding(top = 15.dp))
+//
+//                // lazyrow
+//
+//                Spacer(modifier = Modifier.padding(top = 32.dp))
 
             }
         }
@@ -464,6 +491,13 @@ private fun getData(context: Context, date: String, category: Int?){
                         listCinema = responseBody!!
                         //Log.d("MyLog", listRecommendEvents.toString())
                         checkCinema.value = listCinema.isNotEmpty()
+                        //Log.d("MyLog", checkRecommend.value.toString())
+                    }
+                    20 ->{
+                        val responseBody = response.body()
+                        listTheater = responseBody!!
+                        //Log.d("MyLog", listRecommendEvents.toString())
+                        checkTheater.value = listTheater.isNotEmpty()
                         //Log.d("MyLog", checkRecommend.value.toString())
                     }
                     null -> {
