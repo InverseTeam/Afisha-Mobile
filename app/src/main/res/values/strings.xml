@@ -56,8 +56,8 @@
     <string name="text_hint_start_test">Это поможет подобрать самые интересные события</string>
     <string name="text_to_app">В приложение</string>
     <string name="text_entry_account">Войти в аккаунт</string>
-    <string name="text_ad_title">Матч\nЕкатеринбург - Сочи</string>
-    <string name="text_ad_date">30 июля, ДИВС</string>
+    <string name="text_ad_title">Матч\nСмоленск - Динамо Брянск</string>
+    <string name="text_ad_date">16 ноября, СмолГУС</string>
     <string name="text_about_events">О мероприятии</string>
     <string name="text_profile_description">Что-бы создавать маршруты, сохранять в избранное и записываться на мероприятия войдите или зарегистрируйтесь</string>
     <string name="text_before_test_title">Вы хотите пройти опрос?</string>

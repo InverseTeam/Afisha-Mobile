@@ -1,11 +1,9 @@
 package ramble.sokol.sberafisha.start_test.view.components
 
-import android.util.Log
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,10 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ramble.sokol.sberafisha.R
-import ramble.sokol.sberafisha.destinations.TestRouterScreenDestination
-import ramble.sokol.sberafisha.ui.theme.BoxTextNotClick
-import ramble.sokol.sberafisha.ui.theme.ColorTextHint
-import ramble.sokol.sberafisha.ui.theme.White
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

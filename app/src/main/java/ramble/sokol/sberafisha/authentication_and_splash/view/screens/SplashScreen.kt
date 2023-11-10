@@ -21,21 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 import ramble.sokol.sberafisha.R
 import ramble.sokol.sberafisha.destinations.AdScreenDestination
-import ramble.sokol.sberafisha.destinations.BottomMenuScreenDestination
-import ramble.sokol.sberafisha.destinations.EntryScreenDestination
-import ramble.sokol.sberafisha.destinations.StartTestScreenDestination
-import ramble.sokol.sberafisha.model_project.FirstEntryManager
-import ramble.sokol.sberafisha.model_project.TokenManager
-import ramble.sokol.sberafisha.start_test.view.screeens.StartTestScreen
-import ramble.sokol.sberafisha.ui.theme.SberAfishaTheme
 import ramble.sokol.sberafisha.ui.theme.White
 
 @Destination(start = true)
@@ -79,7 +70,7 @@ fun SplashScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 60.dp)
                     .alpha(alpha = alpha),
-                painter = painterResource(R.drawable.image_splash_screen),
+                painter = painterResource(R.drawable.image_text_auth),
                 contentDescription = "imageSplashScreen"
             )
 
@@ -93,5 +84,6 @@ fun SplashScreen(
                 painter = painterResource(R.drawable.image_text_splash_screen),
                 contentDescription = "TextSplashScreen"
             )
+
         }
 }
